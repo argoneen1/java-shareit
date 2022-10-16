@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    private final static String USER_HTTP_HEADER = "X-Sharer-User-Id";
+    private final String USER_HTTP_HEADER = "X-Sharer-User-Id";
     private final ItemService service;
 
     public ItemController(ItemService service) {

@@ -1,9 +1,6 @@
 package ru.practicum.shareit.item.dao;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.item.dto.ItemCreateOrUpdateDto;
-import ru.practicum.shareit.item.dto.ItemGetDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;

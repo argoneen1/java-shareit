@@ -6,13 +6,13 @@ import ru.practicum.shareit.item.model.Item;
 
 @Data
 @AllArgsConstructor
-public class ItemGetDto  {
+public class ItemGetDto {
     private Long id;
     private String name;
     private String description;
     private Boolean available;
 
-    public ItemGetDto (
+    public ItemGetDto(
             Long id,
             String name,
             String description,

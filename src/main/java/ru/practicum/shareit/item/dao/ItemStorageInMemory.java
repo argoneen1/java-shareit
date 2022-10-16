@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-public class ItemStorageInMemory implements ItemStorage{
+public class ItemStorageInMemory implements ItemStorage {
     private final Map<Long, Item> storage = new HashMap<>();
     private long idGenerator;
 
@@ -27,11 +27,14 @@ public class ItemStorageInMemory implements ItemStorage{
         }
         Item updatedElement = storage.get(id);
         if (element.getName() == null) {
-            element.setName(updatedElement.getName());}
+            element.setName(updatedElement.getName());
+        }
         if (element.getDescription() == null) {
-            element.setDescription(updatedElement.getDescription());}
+            element.setDescription(updatedElement.getDescription());
+        }
         if (element.getStatus() == null) {
-            element.setStatus(updatedElement.getStatus());}
+            element.setStatus(updatedElement.getStatus());
+        }
         storage.put(element.getId(), element);
         return element;
     }

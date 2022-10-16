@@ -9,6 +9,7 @@ import java.util.*;
 public class UserStorageInMemory implements UserStorage {
     private final Map<Long, User> storage = new HashMap<>();
     private long idGenerator;
+
     @Override
     public User create(User element) throws CloneNotSupportedException {
         if (storage.values().stream().anyMatch(a -> a.getEmail().equals(element.getEmail()))) {

@@ -56,7 +56,8 @@ public class UserController {
     public List<UserDto> get() {
         return service.get();
     }
-    private boolean validateOnCreate(UserDto element){
+
+    private boolean validateOnCreate(UserDto element) {
         return element.getName() != null && !element.getName().equals("") &&
                 element.getEmail() != null && !element.getEmail().equals("") && Validation.email(element.getEmail());
     }

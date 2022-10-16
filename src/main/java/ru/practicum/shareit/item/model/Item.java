@@ -16,22 +16,24 @@ public class Item {
     private String description;
     private Status status;
     private ItemRequest request;
-    //private final List<Booking> bookings = new ArrayList<>();
-    public enum Status {
-        RENTED,
-        AVAILABLE
-    }
-    public Item (
+
+    public Item(
             Long id,
-        String name,
-        Long owner,
-        String description,
-        Status status
+            String name,
+            Long owner,
+            String description,
+            Status status
     ) {
         this.id = id;
         this.name = name;
         this.owner = owner;
         this.description = description;
         this.status = status;
+    }
+
+    //private final List<Booking> bookings = new ArrayList<>();
+    public enum Status {
+        RENTED,
+        AVAILABLE
     }
 }

@@ -68,7 +68,7 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemGetDto> search(@PathParam("text") String text) {
-        return text.isBlank() ? List.of() :service.search(text);
+        return text.isBlank() ? List.of() : service.search(text);
     }
 
     private boolean validateOnCreate(ItemCreateOrUpdateDto element) {
@@ -80,7 +80,7 @@ public class ItemController {
 
     private boolean validateOnUpdate(ItemCreateOrUpdateDto element) {
         return element.getId() != null && element.getOwner() != null &&
-                (element.getName() == null ||!element.getName().equals("")) &&
+                (element.getName() == null || !element.getName().equals("")) &&
                 (element.getDescription() == null || !element.getDescription().equals(""));
     }
 }

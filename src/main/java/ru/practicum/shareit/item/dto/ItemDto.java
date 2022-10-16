@@ -14,10 +14,10 @@ public class ItemDto {
     private Boolean available;
     private Integer request;
 
-    public ItemDto (String name,
-                    String description,
-                    Item.Status status,
-                    Integer request) {
+    public ItemDto(String name,
+                   String description,
+                   Item.Status status,
+                   Integer request) {
         this.name = name;
         this.description = description;
         this.available = status == Item.Status.AVAILABLE;

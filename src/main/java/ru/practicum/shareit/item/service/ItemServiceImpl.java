@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
     private final ItemStorage storage;
     private final UserService userService;
+
     public ItemServiceImpl(ItemStorage storage, UserService userService) {
         this.storage = storage;
         this.userService = userService;
@@ -27,7 +28,7 @@ public class ItemServiceImpl implements ItemService {
             userService.get(element.getOwner());
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("there is no such item owner with id " +
-                    e.getMessage().substring(e.getMessage().lastIndexOf(" ")+1));
+                    e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1));
         }
         return ItemMapper.toItemGetDto(storage.create(ItemMapper.toItem(element)));
     }

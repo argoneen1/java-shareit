@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    private final String USER_HTTP_HEADER = "X-Sharer-User-Id";
+    private final String userHttpHeader = "X-Sharer-User-Id";
     private final ItemService service;
 
     public ItemController(ItemService service) {
@@ -25,7 +25,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemGetDto create(@RequestHeader(USER_HTTP_HEADER) Long sharerId,
+    public ItemGetDto create(@RequestHeader(userHttpHeader) Long sharerId,
                              @RequestBody ItemCreateOrUpdateDto element) {
         element.setOwner(sharerId);
         if (!validateOnCreate(element)) {
@@ -36,7 +36,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ItemGetDto update(@RequestHeader(USER_HTTP_HEADER) Long sharerId,
+    public ItemGetDto update(@RequestHeader(userHttpHeader) Long sharerId,
                              @RequestBody ItemCreateOrUpdateDto item,
                              @PathVariable Long id) {
         item.setId(id);
@@ -62,7 +62,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemGetDto> getAll(@RequestHeader(USER_HTTP_HEADER) Long sharerId) {
+    public List<ItemGetDto> getAll(@RequestHeader(userHttpHeader) Long sharerId) {
         return service.getAll(sharerId);
     }
 

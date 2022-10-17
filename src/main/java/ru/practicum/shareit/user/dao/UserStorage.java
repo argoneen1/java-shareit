@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserStorage {
-    User create(User element) throws CloneNotSupportedException;
+    User create(User element);
 
-    User update(User element) throws CloneNotSupportedException;
+    User update(User element);
 
     Optional<User> get(Long id);
 

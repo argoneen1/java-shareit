@@ -2,11 +2,13 @@ package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserGetDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.utils.Validation;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * TODO Sprint add-controllers.
@@ -23,22 +25,14 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@RequestBody UserDto element) throws CloneNotSupportedException {
-
-        if (!validateOnCreate(element)) {
-            log.info("Illegal user fields");
-            throw new IllegalArgumentException("Illegal user fields");
-        }
+    public UserGetDto create(@RequestBody UserCreateDto element) {
         return service.create(element);
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@RequestBody UserDto element, @PathVariable Long id) throws CloneNotSupportedException {
+    public UserGetDto update(@RequestBody UserUpdateDto element,
+                             @PathVariable Long id) {
         element.setId(id);
-        if (!validateOnUpdate(element)) {
-            log.info("Illegal user fields");
-            throw new IllegalArgumentException("Illegal user fields");
-        }
         return service.update(element);
     }
 
@@ -48,23 +42,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDto get(@PathVariable Long id) {
-        return service.get(id);
+    public UserGetDto get(@PathVariable Long id) {
+        return service.get(id).orElseThrow(() -> new NoSuchElementException("there is no such user with id " + id));
     }
 
     @GetMapping
-    public List<UserDto> get() {
+    public List<UserGetDto> get() {
         return service.get();
-    }
-
-    private boolean validateOnCreate(UserDto element) {
-        return element.getName() != null && !element.getName().equals("") &&
-                element.getEmail() != null && !element.getEmail().equals("") && Validation.email(element.getEmail());
-    }
-
-    private boolean validateOnUpdate(UserDto element) {
-        return (element.getName() == null || !element.getName().equals("")) &&
-                (element.getEmail() == null || !element.getEmail().equals("") && Validation.email(element.getEmail()));
     }
 
 }

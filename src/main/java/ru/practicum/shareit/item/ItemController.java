@@ -1,10 +1,12 @@
 package ru.practicum.shareit.item;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.item.dto.ItemCreateOrUpdateDto;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemGetDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.websocket.server.PathParam;
@@ -15,6 +17,7 @@ import java.util.NoSuchElementException;
  * TODO Sprint add-controllers.
  */
 @RestController
+@Slf4j
 @RequestMapping("/items")
 public class ItemController {
     private final String userHttpHeader = "X-Sharer-User-Id";
@@ -26,25 +29,18 @@ public class ItemController {
 
     @PostMapping
     public ItemGetDto create(@RequestHeader(userHttpHeader) Long sharerId,
-                             @RequestBody ItemCreateOrUpdateDto element) {
+                             @RequestBody ItemCreateDto element) {
         element.setOwner(sharerId);
-        if (!validateOnCreate(element)) {
-            System.out.println(element);
-            throw new IllegalArgumentException("Illegal item fields");
-        }
         return service.create(element);
     }
 
     @PatchMapping("/{id}")
     public ItemGetDto update(@RequestHeader(userHttpHeader) Long sharerId,
-                             @RequestBody ItemCreateOrUpdateDto item,
+                             @RequestBody ItemUpdateDto element,
                              @PathVariable Long id) {
-        item.setId(id);
-        item.setOwner(sharerId);
-        if (!validateOnUpdate(item)) {
-            throw new IllegalArgumentException("Illegal item fields");
-        }
-        return service.update(item);
+        element.setId(id);
+        element.setOwner(sharerId);
+        return service.update(element);
     }
 
     @DeleteMapping("/{id}")
@@ -55,7 +51,7 @@ public class ItemController {
     @GetMapping("/{id}")
     public ItemGetDto get(@PathVariable Long id) {
         try {
-            return service.get(id);
+            return service.get(id).orElseThrow();
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -71,16 +67,5 @@ public class ItemController {
         return text.isBlank() ? List.of() : service.search(text);
     }
 
-    private boolean validateOnCreate(ItemCreateOrUpdateDto element) {
-        return element.getOwner() != null &&
-                element.getAvailable() != null &&
-                element.getName() != null && !element.getName().equals("") &&
-                element.getDescription() != null && !element.getDescription().equals("");
-    }
 
-    private boolean validateOnUpdate(ItemCreateOrUpdateDto element) {
-        return element.getId() != null && element.getOwner() != null &&
-                (element.getName() == null || !element.getName().equals("")) &&
-                (element.getDescription() == null || !element.getDescription().equals(""));
-    }
 }

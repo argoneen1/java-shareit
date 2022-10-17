@@ -1,17 +1,21 @@
 package ru.practicum.shareit.user.service;
 
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserGetDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
-    UserDto create(UserDto element) throws CloneNotSupportedException;
+    UserGetDto create(@Valid UserCreateDto element);
 
-    UserDto update(UserDto element) throws CloneNotSupportedException;
+    UserGetDto update(@Valid UserUpdateDto element);
 
     boolean delete(Long id);
 
-    UserDto get(Long id);
+    Optional<UserGetDto> get(Long id);
 
-    List<UserDto> get();
+    List<UserGetDto> get();
 }

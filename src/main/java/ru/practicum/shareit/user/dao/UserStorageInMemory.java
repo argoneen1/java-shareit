@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.dao;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.user.exceptions.UserAlreadyExistsException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
@@ -11,9 +12,9 @@ public class UserStorageInMemory implements UserStorage {
     private long idGenerator;
 
     @Override
-    public User create(User element) throws CloneNotSupportedException {
+    public User create(User element) {
         if (storage.values().stream().anyMatch(a -> a.getEmail().equals(element.getEmail()))) {
-            throw new CloneNotSupportedException("there already is user with such email");
+            throw new UserAlreadyExistsException("there already is user with such email");
         }
         long id = ++idGenerator;
         element.setId(id);
@@ -22,13 +23,13 @@ public class UserStorageInMemory implements UserStorage {
     }
 
     @Override
-    public User update(User element) throws CloneNotSupportedException {
+    public User update(User element) {
         long id = element.getId();
         if (!storage.containsKey(id)) {
             throw new NoSuchElementException("there is no such user with id " + id);
         }
         if (storage.values().stream().anyMatch(a -> a.getEmail().equals(element.getEmail()))) {
-            throw new CloneNotSupportedException("there already is user with such email");
+            throw new UserAlreadyExistsException("there already is user with such email");
         }
         User updated = storage.get(id);
         if (element.getName() == null) {

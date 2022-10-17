@@ -1,17 +1,24 @@
 package ru.practicum.shareit.item.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.dao.ItemStorage;
-import ru.practicum.shareit.item.dto.ItemCreateOrUpdateDto;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemGetDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.exceptions.OwnerIdNotMatches;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 public class ItemServiceImpl implements ItemService {
     private final ItemStorage storage;
     private final UserService userService;
@@ -21,31 +28,24 @@ public class ItemServiceImpl implements ItemService {
         this.userService = userService;
     }
 
-    public ItemGetDto create(ItemCreateOrUpdateDto element) {
-        try {
-            userService.get(element.getOwner());
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("there is no such item owner with id " +
-                    e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1));
+    public ItemGetDto create(@Valid ItemCreateDto element) {
+        if (userService.get(element.getOwner()).isEmpty()) {
+            throw new NoSuchElementException("there is no such item owner with id " + element.getOwner());
         }
         return ItemMapper.toItemGetDto(storage.create(ItemMapper.toItem(element)));
     }
 
-    public ItemGetDto update(ItemCreateOrUpdateDto element) {
+    public ItemGetDto update(@Valid ItemUpdateDto element) {
+        Long elementId = element.getId();
         Long updatingItemOwnerId = element.getOwner();
-        try {
-            userService.get(updatingItemOwnerId);
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("there is no such item owner with id " +
-                    e.getMessage().substring(e.getMessage().lastIndexOf(" ") + 1));
+        if (userService.get(updatingItemOwnerId).isEmpty()) {
+            throw new NoSuchElementException("there is no such item owner with id " + updatingItemOwnerId);
         }
-        Long itemOwnerId = storage.get(element.getId()).get().getOwner();
+        Item updatingItem = storage.get(elementId)
+                .orElseThrow(() -> new NoSuchElementException("there is no such item with id " + element.getId()));
+        Long itemOwnerId = updatingItem.getOwner();
         if (!updatingItemOwnerId.equals(itemOwnerId)) {
-            throw new NoSuchElementException("item`s owner id (" +
-                    itemOwnerId +
-                    ") and update item`s owner id (" +
-                    updatingItemOwnerId +
-                    ") is not equal");
+            throw new OwnerIdNotMatches(updatingItemOwnerId, itemOwnerId);
         }
         return ItemMapper.toItemGetDto(storage.update(ItemMapper.toItem(element)));
     }
@@ -54,11 +54,11 @@ public class ItemServiceImpl implements ItemService {
         return storage.delete(id);
     }
 
-    public ItemGetDto get(Long id) {
-        return ItemMapper.toItemGetDto(
+    public Optional<ItemGetDto> get(Long id) {
+        return Optional.of(ItemMapper.toItemGetDto(
                 storage.get(id)
                         .orElseThrow(() -> new NoSuchElementException("there is no such item with id " + id))
-        );
+        ));
     }
 
     public List<ItemGetDto> getAll(Long sharerId) {
@@ -71,4 +71,5 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemGetDto> search(String text) {
         return storage.search(text).stream().map(ItemMapper::toItemGetDto).collect(Collectors.toList());
     }
+
 }

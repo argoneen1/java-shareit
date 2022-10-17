@@ -20,6 +20,7 @@ public class ItemMapper {
                 item.getAvailable() == null ? null :
                         item.getAvailable() ? Item.Status.AVAILABLE : Item.Status.RENTED);
     }
+
     public static Item toItem(ItemCreateDto item) {
         return new Item(
                 0L,

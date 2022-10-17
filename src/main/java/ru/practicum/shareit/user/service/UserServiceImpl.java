@@ -4,11 +4,9 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dao.UserStorage;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,12 +35,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto get(Long id) {
-        Optional<User> element = storage.get(id);
-        if (element.isEmpty()) {
-            throw new NoSuchElementException("there is no such user with id " + id);
-        } else {
-            return UserMapper.toUserDto(element.get());
-        }
+        return UserMapper.toUserDto(
+                storage.get(id).orElseThrow(
+                        () -> new NoSuchElementException("there is no such user with id " + id)
+                )
+        );
     }
 
     @Override

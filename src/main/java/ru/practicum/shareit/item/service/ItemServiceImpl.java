@@ -5,12 +5,10 @@ import ru.practicum.shareit.item.dao.ItemStorage;
 import ru.practicum.shareit.item.dto.ItemCreateOrUpdateDto;
 import ru.practicum.shareit.item.dto.ItemGetDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,12 +55,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public ItemGetDto get(Long id) {
-        Optional<Item> item = storage.get(id);
-        if (item.isEmpty()) {
-            throw new NoSuchElementException("there is no such item with id " + id);
-        } else {
-            return ItemMapper.toItemGetDto(item.get());
-        }
+        return ItemMapper.toItemGetDto(
+                storage.get(id)
+                        .orElseThrow(() -> new NoSuchElementException("there is no such item with id " + id))
+        );
     }
 
     public List<ItemGetDto> getAll(Long sharerId) {

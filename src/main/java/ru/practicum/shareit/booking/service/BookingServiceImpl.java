@@ -36,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
         validationOnCreate(booking);
         booking.setStatus(Status.WAITING);
         Long id = repository.save(bookingMapper.toBooking(booking)).getId();
-        return repository.findById(id).get();
+        return repository.findById(id).orElseThrow(() -> getNoSuchElementException("booking", id));
     }
 
     private void validationOnCreate(BookingCreateDto booking) {
@@ -52,6 +52,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NoSuchElementException("owner trying to rent own item");
         }
     }
+
     @Override
     public Booking confirm(Long sharerId, Long bookingId, @NonNull Boolean isApproved) {
         Booking booking = repository.findById(bookingId)
@@ -59,7 +60,7 @@ public class BookingServiceImpl implements BookingService {
         validationOnConfirm(sharerId, booking);
         booking.setStatus(isApproved ? Status.APPROVED : Status.REJECTED);
         repository.save(booking);
-        return repository.findById(bookingId).get();
+        return repository.findById(bookingId).orElseThrow(() -> getNoSuchElementException("booking", bookingId));
     }
 
     private void validationOnConfirm(Long sharerId, Booking booking) {
@@ -115,5 +116,5 @@ public class BookingServiceImpl implements BookingService {
                 BookingRequestsState.WAITING,
                 BookingRequestsState.REJECTED);
     }
-    
+
 }

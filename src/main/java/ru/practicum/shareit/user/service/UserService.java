@@ -8,9 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
+
     User create(@Valid UserInsertDto element);
+
     User update(@Valid UserInsertDto element);
+
     void delete(Long id);
+
     Optional<User> findById(Long id);
+
     List<User> findAll();
 }

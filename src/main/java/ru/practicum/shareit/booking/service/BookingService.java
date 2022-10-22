@@ -10,8 +10,12 @@ import java.util.Optional;
 
 public interface BookingService {
     Booking create(@Valid BookingCreateDto booking);
+
     Booking confirm(Long sharerId, Long bookingId, Boolean isApproved);
+
     Optional<Booking> findById(Long requesterId, Long bookingId);
+
     List<Booking> findByBooker(Long sharerId, BookingRequestsState state);
+
     List<Booking> findByOwner(Long sharerId, BookingRequestsState state);
 }

@@ -35,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final CommentMapper commentMapper;
 
-    @Validated(ValidationMarker.onCreate.class)
+    @Validated(ValidationMarker.OnCreate.class)
     public Item create(@Valid ItemInsertDto element) {
         if (userService.findById(element.getOwner()).isEmpty()) {
             throw getNoSuchElementException("item", element.getOwner());
@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
         return repository.save(itemMapper.toItem(element));
     }
 
-    @Validated(ValidationMarker.onUpdate.class)
+    @Validated(ValidationMarker.OnUpdate.class)
     public Item update(@Valid ItemInsertDto element) {
         Long elementId = element.getId();
         Long updatingItemOwnerId = element.getOwner();

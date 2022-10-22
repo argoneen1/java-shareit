@@ -11,10 +11,16 @@ import java.util.Optional;
 
 public interface ItemService {
     Item create(@Valid ItemInsertDto element);
+
     Item update(@Valid ItemInsertDto element);
+
     void delete(Long id);
+
     Optional<Item> findById(Long id);
+
     List<Item> findAllByOwnerId(Long ownerId);
+
     List<Item> search(String text);
+
     Comment postComment(CommentInsertDto comment);
 }

@@ -22,6 +22,14 @@ public class ItemMapper {
         this.bookingRepository = bookingRepository;
     }
 
+    public static ItemSecondLevelDto toSecondLevel(Item item) {
+        return new ItemSecondLevelDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getStatus() == Status.AVAILABLE);
+    }
+
     public ItemGetDto toItemGetDto(Item item, Long userId) {
         BookingSecondLevelDto lastBooking = null;
         BookingSecondLevelDto nextBooking = null;
@@ -30,23 +38,16 @@ public class ItemMapper {
             nextBooking = BookingMapper.toSecondLevel(bookingRepository.findNext(item.getId()).orElse(null));
         }
         return new ItemGetDto(
+                lastBooking,
+                nextBooking,
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
                 item.getStatus() == Status.AVAILABLE,
-                lastBooking,
-                nextBooking,
+
                 item.getComments().stream().map(CommentMapper::toGetDto).collect(Collectors.toList())
         );
 
-    }
-
-    public static ItemSecondLevelDto toSecondLevel(Item item) {
-        return new ItemSecondLevelDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getStatus() == Status.AVAILABLE);
     }
 
     public Item toItem(ItemInsertDto item) {

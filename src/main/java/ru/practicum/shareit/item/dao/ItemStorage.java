@@ -7,9 +7,14 @@ import java.util.Optional;
 
 public interface ItemStorage {
     Item create(Item element);
+
     Item update(Item element);
+
     Optional<Item> get(Long id);
+
     List<Item> get();
+
     boolean delete(Long id);
+
     List<Item> search(String text);
 }

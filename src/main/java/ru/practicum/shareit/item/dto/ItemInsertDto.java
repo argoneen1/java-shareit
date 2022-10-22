@@ -13,21 +13,21 @@ import javax.validation.constraints.Null;
 @AllArgsConstructor
 public class ItemInsertDto {
 
-    @Null(groups = ValidationMarker.onCreate.class)
-    @NotNull(groups = ValidationMarker.onUpdate.class)
+    @Null(groups = ValidationMarker.OnCreate.class)
+    @NotNull(groups = ValidationMarker.OnUpdate.class)
     private Long id;
 
-    @NotBlank(groups = ValidationMarker.onCreate.class)
-    @NullOrNotBlank(groups = ValidationMarker.onUpdate.class)
+    @NotBlank(groups = ValidationMarker.OnCreate.class)
+    @NullOrNotBlank(groups = ValidationMarker.OnUpdate.class)
     private String name;
 
-    @NotBlank(groups = ValidationMarker.onCreate.class)
-    @NullOrNotBlank(groups = ValidationMarker.onUpdate.class)
+    @NotBlank(groups = ValidationMarker.OnCreate.class)
+    @NullOrNotBlank(groups = ValidationMarker.OnUpdate.class)
     private String description;
 
-    @NotNull(groups = ValidationMarker.onCreate.class)
+    @NotNull(groups = ValidationMarker.OnCreate.class)
     private Boolean available;
 
-    @NotNull(groups = {ValidationMarker.onCreate.class, ValidationMarker.onUpdate.class})
+    @NotNull(groups = {ValidationMarker.OnCreate.class, ValidationMarker.OnUpdate.class})
     private Long owner;
 }

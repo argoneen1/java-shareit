@@ -1,9 +1,9 @@
 package ru.practicum.shareit.utils.validation;
 
 public interface ValidationMarker {
-    interface onCreate {
+    interface OnCreate {
     }
 
-    interface onUpdate {
+    interface OnUpdate {
     }
 }

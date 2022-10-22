@@ -22,33 +22,33 @@ public class BookingMapper {
     public static BookingGetDto toGetDto(Booking booking) {
         return booking == null ? null :
                 new BookingGetDto(
-                booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                ItemMapper.toSecondLevel(booking.getItem()),
-                UserMapper.toUserDto(booking.getBooker()),
-                booking.getStatus()
-        );
+                        booking.getId(),
+                        booking.getStart(),
+                        booking.getEnd(),
+                        ItemMapper.toSecondLevel(booking.getItem()),
+                        UserMapper.toUserDto(booking.getBooker()),
+                        booking.getStatus()
+                );
     }
 
     public static BookingSecondLevelDto toSecondLevel(Booking booking) {
         return booking == null ? null :
                 new BookingSecondLevelDto(
-                booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                booking.getBooker() == null ? null : booking.getBooker().getId(),
-                booking.getStatus()
-        );
+                        booking.getId(),
+                        booking.getStart(),
+                        booking.getEnd(),
+                        booking.getBooker() == null ? null : booking.getBooker().getId(),
+                        booking.getStatus()
+                );
     }
 
     public Booking toBooking(BookingCreateDto dto) {
         return dto == null ? null :
                 new Booking(null,
-                dto.getStart(),
-                dto.getEnd(),
-                itemService.findById(dto.getItemId()).orElse(null),
-                userService.findById(dto.getBooker()).orElse(null),
-                Status.WAITING);
+                        dto.getStart(),
+                        dto.getEnd(),
+                        itemService.findById(dto.getItemId()).orElse(null),
+                        userService.findById(dto.getBooker()).orElse(null),
+                        Status.WAITING);
     }
 }

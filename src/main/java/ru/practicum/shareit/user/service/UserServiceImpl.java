@@ -23,13 +23,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @Override
-    @Validated(ValidationMarker.onCreate.class)
+    @Validated(ValidationMarker.OnCreate.class)
     public User create(@Valid UserInsertDto element) {
         return repository.save(UserMapper.toUser(element));
     }
 
     @Override
-    @Validated(ValidationMarker.onUpdate.class)
+    @Validated(ValidationMarker.OnUpdate.class)
     public User update(@Valid UserInsertDto element) {
         User updated = repository.findById(element.getId())
                 .orElseThrow(() -> getNoSuchElementException("user", element.getId()));

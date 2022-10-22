@@ -51,7 +51,7 @@ public class BookingController {
 
     @GetMapping
     public List<BookingGetDto> findByBooker(@RequestHeader(USER_HTTP_HEADER)
-                                                Long sharerId,
+                                            Long sharerId,
                                             @RequestParam(value = "state", defaultValue = "ALL")
                                             BookingRequestsState state) {
         return service.findByBooker(sharerId, state).stream().map(BookingMapper::toGetDto).collect(Collectors.toList());
@@ -59,7 +59,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingGetDto> findByOwner(@RequestHeader(USER_HTTP_HEADER)
-                                               Long sharerId,
+                                           Long sharerId,
                                            @RequestParam(value = "state", defaultValue = "ALL")
                                            BookingRequestsState state) {
         return service.findByOwner(sharerId, state).stream().map(BookingMapper::toGetDto).collect(Collectors.toList());

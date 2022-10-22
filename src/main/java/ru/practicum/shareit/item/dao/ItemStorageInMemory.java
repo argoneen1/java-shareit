@@ -2,9 +2,12 @@ package ru.practicum.shareit.item.dao;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.Status;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 
 @Repository
 public class ItemStorageInMemory implements ItemStorage {
@@ -23,7 +26,7 @@ public class ItemStorageInMemory implements ItemStorage {
     public Item update(Item element) {
         Long id = element.getId();
         if (!storage.containsKey(id)) {
-            throw new NoSuchElementException("there is no such item with id " + id);
+            throw getNoSuchElementException("item", id);
         }
         Item updatedElement = storage.get(id);
         if (element.getName() == null) {
@@ -58,7 +61,7 @@ public class ItemStorageInMemory implements ItemStorage {
     @Override
     public List<Item> search(String text) {
         return storage.values().stream()
-                .filter(a -> a.getStatus() == Item.Status.AVAILABLE &&
+                .filter(a -> a.getStatus() == Status.AVAILABLE &&
                         (a.getName().toLowerCase().contains(text.toLowerCase()) ||
                                 a.getDescription().toLowerCase().contains(text.toLowerCase())))
                 .collect(Collectors.toList());

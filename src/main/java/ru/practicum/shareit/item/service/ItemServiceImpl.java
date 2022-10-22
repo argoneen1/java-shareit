@@ -1,75 +1,101 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.item.dao.ItemStorage;
-import ru.practicum.shareit.item.dto.ItemCreateDto;
-import ru.practicum.shareit.item.dto.ItemGetDto;
+import ru.practicum.shareit.item.CommentRepository;
+import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.dto.CommentInsertDto;
+import ru.practicum.shareit.item.dto.CommentMapper;
+import ru.practicum.shareit.item.dto.ItemInsertDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.exceptions.OwnerIdNotMatches;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.Status;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.utils.validation.ValidationMarker;
 
 import javax.validation.Valid;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 
 @Service
 @Validated
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final ItemStorage storage;
+    private final ItemRepository repository;
+    private final CommentRepository commentRepository;
     private final UserService userService;
+    private final ItemMapper itemMapper;
+    private final CommentMapper commentMapper;
 
-    public ItemServiceImpl(ItemStorage storage, UserService userService) {
-        this.storage = storage;
-        this.userService = userService;
-    }
-
-    public ItemGetDto create(@Valid ItemCreateDto element) {
-        if (userService.get(element.getOwner()).isEmpty()) {
-            throw new NoSuchElementException("there is no such item owner with id " + element.getOwner());
+    @Validated(ValidationMarker.onCreate.class)
+    public Item create(@Valid ItemInsertDto element) {
+        if (userService.findById(element.getOwner()).isEmpty()) {
+            throw getNoSuchElementException("item", element.getOwner());
         }
-        return ItemMapper.toItemGetDto(storage.create(ItemMapper.toItem(element)));
+        return repository.save(itemMapper.toItem(element));
     }
 
-    public ItemGetDto update(@Valid ItemUpdateDto element) {
+    @Validated(ValidationMarker.onUpdate.class)
+    public Item update(@Valid ItemInsertDto element) {
         Long elementId = element.getId();
         Long updatingItemOwnerId = element.getOwner();
-        if (userService.get(updatingItemOwnerId).isEmpty()) {
-            throw new NoSuchElementException("there is no such item owner with id " + updatingItemOwnerId);
+        if (userService.findById(updatingItemOwnerId).isEmpty()) {
+            throw getNoSuchElementException("item", updatingItemOwnerId);
         }
-        Item updatingItem = storage.get(elementId)
-                .orElseThrow(() -> new NoSuchElementException("there is no such item with id " + element.getId()));
-        Long itemOwnerId = updatingItem.getOwner();
+        Item updatingItem = repository.findById(elementId)
+                .orElseThrow(() -> getNoSuchElementException("item", element.getId()));
+        Long itemOwnerId = updatingItem.getOwner().getId();
         if (!updatingItemOwnerId.equals(itemOwnerId)) {
             throw new OwnerIdNotMatches(updatingItemOwnerId, itemOwnerId);
         }
-        return ItemMapper.toItemGetDto(storage.update(ItemMapper.toItem(element)));
+        return repository.save(fillFieldsOnUpdate(element, updatingItem));
     }
 
-    public boolean delete(Long id) {
-        return storage.delete(id);
+    private Item fillFieldsOnUpdate(ItemInsertDto element, Item updatingItem) {
+        if (element.getName() == null) {
+            element.setName(updatingItem.getName());
+        }
+        if (element.getDescription() == null) {
+            element.setDescription(updatingItem.getDescription());
+        }
+        if (element.getAvailable() == null) {
+            element.setAvailable(updatingItem.getStatus() == Status.AVAILABLE);
+        }
+        return itemMapper.toItem(element);
     }
 
-    public Optional<ItemGetDto> get(Long id) {
-        return Optional.of(ItemMapper.toItemGetDto(
-                storage.get(id)
-                        .orElseThrow(() -> new NoSuchElementException("there is no such item with id " + id))
-        ));
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 
-    public List<ItemGetDto> getAll(Long sharerId) {
-        return storage.get().stream()
-                .filter(a -> a.getOwner().equals(sharerId))
-                .map(ItemMapper::toItemGetDto)
-                .collect(Collectors.toList());
+    public Optional<Item> findById(Long id) {
+        return repository.findById(id);
     }
 
-    public List<ItemGetDto> search(String text) {
-        return storage.search(text).stream().map(ItemMapper::toItemGetDto).collect(Collectors.toList());
+    public List<Item> findAllByOwnerId(Long ownerId) {
+        return repository.findByOwnerIdOrderByIdAsc(ownerId);
     }
 
+    public List<Item> search(String text) {
+        return repository.search(text);
+    }
+
+    public Comment postComment(CommentInsertDto comment) {
+        if (findById(comment.getItemId())
+                .orElseThrow(() -> getNoSuchElementException("item", comment.getItemId()))
+                .getBookings().stream()
+                .noneMatch(a -> a.getEnd().isBefore(LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault())))
+        ) {
+            throw new IllegalArgumentException("must have non-zero number of booking in past");
+        }
+        return commentRepository.save(commentMapper.toComment(comment));
+    }
 }

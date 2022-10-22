@@ -1,27 +1,64 @@
 package ru.practicum.shareit.booking.model;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+import org.hibernate.Hibernate;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * TODO Sprint add-bookings.
  */
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "bookings", schema = "public")
 public class Booking {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Column(name = "start", nullable = false)
     private LocalDateTime start;
+
+    @Column(name = "\"end\"", nullable = false)
     private LocalDateTime end;
+
+    @ManyToOne
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
+
+    @ManyToOne
+    @JoinColumn(name = "booker_id", referencedColumnName = "id")
     private User booker;
+
+    @Enumerated
+    @Column(name = "status")
     private Status status;
 
-    enum Status {
-        WAITING,
-        APPROVED,
-        REJECTED,
-        CANCELED
+    @JsonIgnore
+    public User getItemOwner() {
+        return item.getOwner();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Booking booking = (Booking) o;
+        return id != null && Objects.equals(id, booking.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

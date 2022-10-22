@@ -1,33 +1,61 @@
 package ru.practicum.shareit.item.dto;
 
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingSecondLevelDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.Status;
+import ru.practicum.shareit.user.service.UserService;
 
+import java.util.stream.Collectors;
+
+@Component
 public class ItemMapper {
-    public static ItemGetDto toItemGetDto(Item item) {
+
+    private final UserService userService;
+    private final BookingRepository bookingRepository;
+
+    public ItemMapper(@Lazy UserService userService, @Lazy BookingRepository bookingRepository) {
+        this.userService = userService;
+        this.bookingRepository = bookingRepository;
+    }
+
+    public ItemGetDto toItemGetDto(Item item, Long userId) {
+        BookingSecondLevelDto lastBooking = null;
+        BookingSecondLevelDto nextBooking = null;
+        if (item.getOwner().getId().equals(userId)) {
+            lastBooking = BookingMapper.toSecondLevel(bookingRepository.findLast(item.getId()).orElse(null));
+            nextBooking = BookingMapper.toSecondLevel(bookingRepository.findNext(item.getId()).orElse(null));
+        }
         return new ItemGetDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.getStatus() == Item.Status.AVAILABLE);
+                item.getStatus() == Status.AVAILABLE,
+                lastBooking,
+                nextBooking,
+                item.getComments().stream().map(CommentMapper::toGetDto).collect(Collectors.toList())
+        );
+
     }
 
-    public static Item toItem(ItemUpdateDto item) {
+    public static ItemSecondLevelDto toSecondLevel(Item item) {
+        return new ItemSecondLevelDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getStatus() == Status.AVAILABLE);
+    }
+
+    public Item toItem(ItemInsertDto item) {
         return new Item(
                 item.getId(),
                 item.getName(),
-                item.getOwner(),
+                userService.findById(item.getOwner()).orElse(null),
                 item.getDescription(),
                 item.getAvailable() == null ? null :
-                        item.getAvailable() ? Item.Status.AVAILABLE : Item.Status.RENTED);
-    }
-
-    public static Item toItem(ItemCreateDto item) {
-        return new Item(
-                0L,
-                item.getName(),
-                item.getOwner(),
-                item.getDescription(),
-                item.getAvailable() == null ? null :
-                        item.getAvailable() ? Item.Status.AVAILABLE : Item.Status.RENTED);
+                        item.getAvailable() ? Status.AVAILABLE : Status.RENTED);
     }
 }

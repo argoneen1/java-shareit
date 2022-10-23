@@ -64,8 +64,8 @@ public class ItemController {
                                    @PositiveOrZero
                                    int from,
                                    @RequestParam(value = "size", defaultValue = "2147483646", required = false)
-                                       @Positive
-                                       int size) {
+                                   @Positive
+                                   int size) {
         return service.findAllByOwnerId(sharerId, from / size, size).stream()
                 .map(a -> itemMapper.toItemGetDto(a, sharerId))
                 .collect(Collectors.toList());
@@ -77,8 +77,8 @@ public class ItemController {
                                    @PositiveOrZero
                                    int from,
                                    @RequestParam(value = "size", defaultValue = "2147483646", required = false)
-                                       @Positive
-                                       int size) {
+                                   @Positive
+                                   int size) {
         return text.isBlank() ?
                 List.of() :
                 service.search(text, from / size, size).stream()

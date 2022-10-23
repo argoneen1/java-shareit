@@ -56,11 +56,11 @@ public class BookingController {
                                             @RequestParam(value = "state", defaultValue = "ALL")
                                             BookingRequestsState state,
                                             @RequestParam(value = "from", defaultValue = "0", required = false)
-                                                @PositiveOrZero
-                                                int from,
+                                            @PositiveOrZero
+                                            int from,
                                             @RequestParam(value = "size", defaultValue = "2147483646", required = false)
-                                                @Positive
-                                                int size) {
+                                            @Positive
+                                            int size) {
         return service.findByBooker(sharerId, state, from / size, size)
                 .stream()
                 .map(BookingMapper::toGetDto)
@@ -73,11 +73,11 @@ public class BookingController {
                                            @RequestParam(value = "state", defaultValue = "ALL")
                                            BookingRequestsState state,
                                            @RequestParam(value = "from", defaultValue = "0", required = false)
-                                               @PositiveOrZero
-                                               int from,
+                                           @PositiveOrZero
+                                           int from,
                                            @RequestParam(value = "size", defaultValue = "2147483646", required = false)
-                                               @Positive
-                                               int size) {
+                                           @Positive
+                                           int size) {
         return service.findByOwner(sharerId, state, from / size, size)
                 .stream()
                 .map(BookingMapper::toGetDto)

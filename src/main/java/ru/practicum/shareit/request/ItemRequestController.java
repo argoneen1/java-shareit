@@ -49,8 +49,8 @@ public class ItemRequestController {
                                            @PositiveOrZero
                                            int from,
                                            @RequestParam(value = "size", defaultValue = "2147483646", required = false)
-                                               @Positive
-                                               int size) {
+                                           @Positive
+                                           int size) {
         return service.findAllPaging(requesterId, from / size, size)
                 .stream()
                 .map(itemRequestMapper::toGetDto)

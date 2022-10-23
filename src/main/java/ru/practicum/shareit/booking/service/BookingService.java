@@ -15,7 +15,7 @@ public interface BookingService {
 
     Optional<Booking> findById(Long requesterId, Long bookingId);
 
-    List<Booking> findByBooker(Long sharerId, BookingRequestsState state, Integer from, Integer size);
+    List<Booking> findByBooker(Long sharerId, BookingRequestsState state, int from, int size);
 
-    List<Booking> findByOwner(Long sharerId, BookingRequestsState state, Integer from, Integer size);
+    List<Booking> findByOwner(Long sharerId, BookingRequestsState state, int from, int size);
 }

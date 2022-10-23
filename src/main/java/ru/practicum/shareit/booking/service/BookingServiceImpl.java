@@ -89,7 +89,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> findByBooker(Long sharerId, BookingRequestsState state, Integer from, Integer size) {
+    public List<Booking> findByBooker(Long sharerId, BookingRequestsState state, int from, int size) {
         if (userService.findById(sharerId).isEmpty()) {
             throw getNoSuchElementException("user", sharerId);
         }
@@ -107,7 +107,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> findByOwner(Long sharerId, BookingRequestsState state, Integer from, Integer size) {
+    public List<Booking> findByOwner(Long sharerId, BookingRequestsState state, int from, int size) {
         if (userService.findById(sharerId).isEmpty()) {
             throw getNoSuchElementException("user", sharerId);
         }

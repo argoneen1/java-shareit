@@ -13,7 +13,7 @@ public interface ItemRequestService {
 
     List<ItemRequest> findAllByRequesterId(Long RequesterId);
 
-    List<ItemRequest> findAllPaging(Long requesterId, Integer from, Integer size);
+    List<ItemRequest> findAllPaging(Long requesterId, int from, int size);
 
     Optional<ItemRequest> findById(Long requesterId, Long itemRequestId);
 

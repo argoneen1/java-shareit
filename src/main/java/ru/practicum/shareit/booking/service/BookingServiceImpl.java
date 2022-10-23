@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -88,22 +89,25 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> findByBooker(Long sharerId, BookingRequestsState state) {
+    public List<Booking> findByBooker(Long sharerId, BookingRequestsState state, Integer from, Integer size) {
         if (userService.findById(sharerId).isEmpty()) {
             throw getNoSuchElementException("user", sharerId);
         }
-        return repository.findByBookerIdAndState(sharerId,
+        List<Booking> bookings = repository.findByBookerIdAndState(sharerId,
                 state,
                 BookingRequestsState.ALL,// Другого способа вставить в аннотацию этот enum не нашёл, извините
                 BookingRequestsState.PAST,
                 BookingRequestsState.FUTURE,
                 BookingRequestsState.CURRENT,
                 BookingRequestsState.WAITING,
-                BookingRequestsState.REJECTED);
+                BookingRequestsState.REJECTED,
+                PageRequest.of(from, size)).getContent();
+        System.out.println(bookings);
+        return bookings;
     }
 
     @Override
-    public List<Booking> findByOwner(Long sharerId, BookingRequestsState state) {
+    public List<Booking> findByOwner(Long sharerId, BookingRequestsState state, Integer from, Integer size) {
         if (userService.findById(sharerId).isEmpty()) {
             throw getNoSuchElementException("user", sharerId);
         }
@@ -114,7 +118,8 @@ public class BookingServiceImpl implements BookingService {
                 BookingRequestsState.FUTURE,
                 BookingRequestsState.CURRENT,
                 BookingRequestsState.WAITING,
-                BookingRequestsState.REJECTED);
+                BookingRequestsState.REJECTED,
+                PageRequest.of(from, size)).getContent();
     }
 
 }

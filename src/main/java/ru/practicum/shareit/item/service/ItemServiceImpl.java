@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.CommentRepository;
@@ -85,13 +86,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> findAllByOwnerId(Long ownerId) {
-        return repository.findByOwnerIdOrderByIdAsc(ownerId);
+    public List<Item> findAllByOwnerId(Long ownerId, int from, int size) {
+        return repository.findAllByOwnerIdOrderByIdAsc(ownerId, PageRequest.of(from, size)).getContent();
     }
 
     @Override
-    public List<Item> search(String text) {
-        return repository.search(text);
+    public List<Item> search(String text, int from, int size) {
+        return repository.search(text, PageRequest.of(from, size)).getContent();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingGetDto;
@@ -8,16 +9,16 @@ import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.BookingRequestsState;
 import ru.practicum.shareit.booking.service.BookingService;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.utils.Constants.USER_HTTP_HEADER;
 import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 
-/**
- * TODO Sprint add-bookings.
- */
 @RestController
+@Validated
 @RequestMapping(path = "/bookings")
 @Slf4j
 public class BookingController {
@@ -53,15 +54,33 @@ public class BookingController {
     public List<BookingGetDto> findByBooker(@RequestHeader(USER_HTTP_HEADER)
                                             Long sharerId,
                                             @RequestParam(value = "state", defaultValue = "ALL")
-                                            BookingRequestsState state) {
-        return service.findByBooker(sharerId, state).stream().map(BookingMapper::toGetDto).collect(Collectors.toList());
+                                            BookingRequestsState state,
+                                            @RequestParam(value = "from", defaultValue = "0", required = false)
+                                                @PositiveOrZero
+                                                int from,
+                                            @RequestParam(value = "size", defaultValue = "2147483646", required = false)
+                                                @Positive
+                                                int size) {
+        return service.findByBooker(sharerId, state, from / size, size)
+                .stream()
+                .map(BookingMapper::toGetDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/owner")
     public List<BookingGetDto> findByOwner(@RequestHeader(USER_HTTP_HEADER)
                                            Long sharerId,
                                            @RequestParam(value = "state", defaultValue = "ALL")
-                                           BookingRequestsState state) {
-        return service.findByOwner(sharerId, state).stream().map(BookingMapper::toGetDto).collect(Collectors.toList());
+                                           BookingRequestsState state,
+                                           @RequestParam(value = "from", defaultValue = "0", required = false)
+                                               @PositiveOrZero
+                                               int from,
+                                           @RequestParam(value = "size", defaultValue = "2147483646", required = false)
+                                               @Positive
+                                               int size) {
+        return service.findByOwner(sharerId, state, from / size, size)
+                .stream()
+                .map(BookingMapper::toGetDto)
+                .collect(Collectors.toList());
     }
 }

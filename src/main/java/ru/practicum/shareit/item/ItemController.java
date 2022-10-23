@@ -2,10 +2,13 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +21,7 @@ import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
  */
 @RestController
 @Slf4j
+@Validated
 @RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
@@ -55,17 +59,29 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemGetDto> getAll(@RequestHeader(USER_HTTP_HEADER) Long sharerId) {
-        return service.findAllByOwnerId(sharerId).stream()
+    public List<ItemGetDto> getAll(@RequestHeader(USER_HTTP_HEADER) Long sharerId,
+                                   @RequestParam(value = "from", defaultValue = "0", required = false)
+                                   @PositiveOrZero
+                                   int from,
+                                   @RequestParam(value = "size", defaultValue = "2147483646", required = false)
+                                       @Positive
+                                       int size) {
+        return service.findAllByOwnerId(sharerId, from / size, size).stream()
                 .map(a -> itemMapper.toItemGetDto(a, sharerId))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/search")
-    public List<ItemGetDto> search(@PathParam("text") String text) {
+    public List<ItemGetDto> search(@PathParam("text") String text,
+                                   @RequestParam(value = "from", defaultValue = "0", required = false)
+                                   @PositiveOrZero
+                                   int from,
+                                   @RequestParam(value = "size", defaultValue = "2147483646", required = false)
+                                       @Positive
+                                       int size) {
         return text.isBlank() ?
                 List.of() :
-                service.search(text).stream()
+                service.search(text, from / size, size).stream()
                         .map(a -> itemMapper.toItemGetDto(a, 0L))
                         .collect(Collectors.toList());
     }

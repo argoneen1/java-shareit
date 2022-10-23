@@ -41,7 +41,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequest> findAllPaging(Long requesterId, Integer from, Integer size) {
+    public List<ItemRequest> findAllPaging(Long requesterId, int from, int size) {
         return repository.findAllByNotRequesterIdWithPageable(
                         requesterId,
                         PageRequest.of(from, size, Sort.Direction.DESC, "created"))

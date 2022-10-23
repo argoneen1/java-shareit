@@ -18,9 +18,9 @@ public interface ItemService {
 
     Optional<Item> findById(Long id);
 
-    List<Item> findAllByOwnerId(Long ownerId);
+    List<Item> findAllByOwnerId(Long ownerId, int from, int size);
 
-    List<Item> search(String text);
+    List<Item> search(String text, int from, int size);
 
     Comment postComment(CommentInsertDto comment);
 

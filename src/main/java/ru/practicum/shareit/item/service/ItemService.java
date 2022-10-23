@@ -23,4 +23,5 @@ public interface ItemService {
     List<Item> search(String text);
 
     Comment postComment(CommentInsertDto comment);
+
 }

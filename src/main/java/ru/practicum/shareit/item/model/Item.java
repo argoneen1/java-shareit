@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -39,8 +40,9 @@ public class Item {
     @Enumerated
     private Status status;
 
-    @Column(name = "request_id")
-    private Long request;
+    @ManyToOne
+    @JoinColumn(name = "request_id", referencedColumnName = "id")
+    private ItemRequest request;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.PERSIST)
     private List<Booking> bookings = new ArrayList<>();
@@ -53,12 +55,14 @@ public class Item {
             String name,
             User owner,
             String description,
+            ItemRequest request,
             Status status
     ) {
         this.id = id;
         this.name = name;
         this.owner = owner;
         this.description = description;
+        this.request = request;
         this.status = status;
     }
 

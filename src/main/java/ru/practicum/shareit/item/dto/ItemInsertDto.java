@@ -30,4 +30,6 @@ public class ItemInsertDto {
 
     @NotNull(groups = {ValidationMarker.OnCreate.class, ValidationMarker.OnUpdate.class})
     private Long owner;
+
+    private Long requestId;
 }

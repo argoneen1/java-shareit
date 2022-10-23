@@ -35,6 +35,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final CommentMapper commentMapper;
 
+    @Override
     @Validated(ValidationMarker.OnCreate.class)
     public Item create(@Valid ItemInsertDto element) {
         if (userService.findById(element.getOwner()).isEmpty()) {
@@ -43,6 +44,7 @@ public class ItemServiceImpl implements ItemService {
         return repository.save(itemMapper.toItem(element));
     }
 
+    @Override
     @Validated(ValidationMarker.OnUpdate.class)
     public Item update(@Valid ItemInsertDto element) {
         Long elementId = element.getId();
@@ -72,22 +74,27 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toItem(element);
     }
 
+    @Override
     public void delete(Long id) {
         repository.deleteById(id);
     }
 
+    @Override
     public Optional<Item> findById(Long id) {
         return repository.findById(id);
     }
 
+    @Override
     public List<Item> findAllByOwnerId(Long ownerId) {
         return repository.findByOwnerIdOrderByIdAsc(ownerId);
     }
 
+    @Override
     public List<Item> search(String text) {
         return repository.search(text);
     }
 
+    @Override
     public Comment postComment(CommentInsertDto comment) {
         if (findById(comment.getItemId())
                 .orElseThrow(() -> getNoSuchElementException("item", comment.getItemId()))

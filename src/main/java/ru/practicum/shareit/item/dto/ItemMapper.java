@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingSecondLevelDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.Status;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.stream.Collectors;
@@ -15,10 +16,15 @@ import java.util.stream.Collectors;
 public class ItemMapper {
 
     private final UserService userService;
+    private final ItemRequestService itemRequestService;
+
     private final BookingRepository bookingRepository;
 
-    public ItemMapper(@Lazy UserService userService, @Lazy BookingRepository bookingRepository) {
+    public ItemMapper(@Lazy UserService userService,
+                      @Lazy ItemRequestService itemRequestService,
+                      @Lazy BookingRepository bookingRepository) {
         this.userService = userService;
+        this.itemRequestService = itemRequestService;
         this.bookingRepository = bookingRepository;
     }
 
@@ -27,7 +33,8 @@ public class ItemMapper {
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.getStatus() == Status.AVAILABLE);
+                item.getStatus() == Status.AVAILABLE,
+                item.getRequest() == null ? null : item.getRequest().getId());
     }
 
     public ItemGetDto toItemGetDto(Item item, Long userId) {
@@ -38,13 +45,14 @@ public class ItemMapper {
             nextBooking = BookingMapper.toSecondLevel(bookingRepository.findNext(item.getId()).orElse(null));
         }
         return new ItemGetDto(
-                lastBooking,
-                nextBooking,
+
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
                 item.getStatus() == Status.AVAILABLE,
-
+                item.getRequest() == null ? null : item.getRequest().getId(),
+                lastBooking,
+                nextBooking,
                 item.getComments().stream().map(CommentMapper::toGetDto).collect(Collectors.toList())
         );
 
@@ -56,6 +64,8 @@ public class ItemMapper {
                 item.getName(),
                 userService.findById(item.getOwner()).orElse(null),
                 item.getDescription(),
+                item.getRequestId() == null ? null :
+                        itemRequestService.findById(item.getRequestId()).orElse(null),
                 item.getAvailable() == null ? null :
                         item.getAvailable() ? Status.AVAILABLE : Status.RENTED);
     }

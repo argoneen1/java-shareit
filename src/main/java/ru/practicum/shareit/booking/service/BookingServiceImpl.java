@@ -93,7 +93,7 @@ public class BookingServiceImpl implements BookingService {
         if (userService.findById(sharerId).isEmpty()) {
             throw getNoSuchElementException("user", sharerId);
         }
-        List<Booking> bookings = repository.findByBookerIdAndState(sharerId,
+        return repository.findByBookerIdAndState(sharerId,
                 state,
                 BookingRequestsState.ALL,// Другого способа вставить в аннотацию этот enum не нашёл, извините
                 BookingRequestsState.PAST,
@@ -102,8 +102,6 @@ public class BookingServiceImpl implements BookingService {
                 BookingRequestsState.WAITING,
                 BookingRequestsState.REJECTED,
                 PageRequest.of(from, size)).getContent();
-        System.out.println(bookings);
-        return bookings;
     }
 
     @Override

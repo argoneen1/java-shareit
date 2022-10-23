@@ -1,21 +1,21 @@
 package ru.practicum.shareit.user.service;
 
-import ru.practicum.shareit.user.dto.UserCreateDto;
-import ru.practicum.shareit.user.dto.UserGetDto;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
+import ru.practicum.shareit.user.dto.UserInsertDto;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    UserGetDto create(@Valid UserCreateDto element);
 
-    UserGetDto update(@Valid UserUpdateDto element);
+    User create(@Valid UserInsertDto element);
 
-    boolean delete(Long id);
+    User update(@Valid UserInsertDto element);
 
-    Optional<UserGetDto> get(Long id);
+    void delete(Long id);
 
-    List<UserGetDto> get();
+    Optional<User> findById(Long id);
+
+    List<User> findAll();
 }

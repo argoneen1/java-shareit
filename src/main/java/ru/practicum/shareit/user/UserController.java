@@ -2,13 +2,15 @@ package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserGetDto;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
+import ru.practicum.shareit.user.dto.UserInsertDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 
 /**
  * TODO Sprint add-controllers.
@@ -25,30 +27,31 @@ public class UserController {
     }
 
     @PostMapping
-    public UserGetDto create(@RequestBody UserCreateDto element) {
-        return service.create(element);
+    public UserGetDto create(@RequestBody UserInsertDto element) {
+        return UserMapper.toUserDto(service.create(element));
     }
 
     @PatchMapping("/{id}")
-    public UserGetDto update(@RequestBody UserUpdateDto element,
+    public UserGetDto update(@RequestBody UserInsertDto element,
                              @PathVariable Long id) {
         element.setId(id);
-        return service.update(element);
+        return UserMapper.toUserDto(service.update(element));
     }
 
     @DeleteMapping("/{id}")
-    public boolean delete(@PathVariable Long id) {
-        return service.delete(id);
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 
     @GetMapping("/{id}")
-    public UserGetDto get(@PathVariable Long id) {
-        return service.get(id).orElseThrow(() -> new NoSuchElementException("there is no such user with id " + id));
+    public UserGetDto findById(@PathVariable Long id) {
+        return UserMapper.toUserDto(
+                service.findById(id).orElseThrow(() -> getNoSuchElementException("user", id)));
     }
 
     @GetMapping
-    public List<UserGetDto> get() {
-        return service.get();
+    public List<UserGetDto> findAll() {
+        return service.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
 }

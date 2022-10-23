@@ -1,23 +1,26 @@
 package ru.practicum.shareit.item.service;
 
-import ru.practicum.shareit.item.dto.ItemCreateDto;
-import ru.practicum.shareit.item.dto.ItemGetDto;
-import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.dto.CommentInsertDto;
+import ru.practicum.shareit.item.dto.ItemInsertDto;
+import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 public interface ItemService {
-    ItemGetDto create(@Valid ItemCreateDto element);
+    Item create(@Valid ItemInsertDto element);
 
-    ItemGetDto update(@Valid ItemUpdateDto element);
+    Item update(@Valid ItemInsertDto element);
 
-    boolean delete(Long id);
+    void delete(Long id);
 
-    Optional<ItemGetDto> get(Long id);
+    Optional<Item> findById(Long id);
 
-    List<ItemGetDto> getAll(Long sharerId);
+    List<Item> findAllByOwnerId(Long ownerId);
 
-    List<ItemGetDto> search(String text);
+    List<Item> search(String text);
+
+    Comment postComment(CommentInsertDto comment);
 }

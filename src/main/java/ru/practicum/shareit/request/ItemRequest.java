@@ -9,8 +9,12 @@ import java.time.LocalDateTime;
  */
 @Data
 public class ItemRequest {
+
     private int id;
+
     private String requester;
+
     private String description;
+
     private LocalDateTime created;
 }

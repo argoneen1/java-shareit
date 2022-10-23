@@ -11,15 +11,7 @@ public class UserMapper {
         );
     }
 
-    public static User toUser(UserCreateDto user) {
-        return new User(
-                0L,
-                user.getName(),
-                user.getEmail()
-        );
-    }
-
-    public static User toUser(UserUpdateDto user) {
+    public static User toUser(UserInsertDto user) {
         return new User(
                 user.getId(),
                 user.getName(),

@@ -1,5 +1,6 @@
 package ru.practicum.shareit;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +29,8 @@ public class ErrorHandlingControllerAdvices {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> illegalArgumentExceptionHandler(final IllegalArgumentException e) {
+        if (e.getMessage().startsWith("No enum constant"))
+            return Map.of("error", "Unknown state: UNSUPPORTED_STATUS");
         return Map.of("bad request", e.getMessage());
     }
 
@@ -35,6 +38,12 @@ public class ErrorHandlingControllerAdvices {
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> userAlreadyExistsExceptionHandler(final UserAlreadyExistsException e) {
         return Map.of("such user already exists", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> userWithThisEmailAlreadyExists(final DataIntegrityViolationException e) {
+        return Map.of("user with this email already exists", e.getMessage());
     }
 
     @ExceptionHandler

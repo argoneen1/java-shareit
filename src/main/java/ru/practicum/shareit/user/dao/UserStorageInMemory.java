@@ -6,6 +6,8 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 
+import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
+
 @Repository
 public class UserStorageInMemory implements UserStorage {
     private final Map<Long, User> storage = new HashMap<>();
@@ -26,7 +28,7 @@ public class UserStorageInMemory implements UserStorage {
     public User update(User element) {
         long id = element.getId();
         if (!storage.containsKey(id)) {
-            throw new NoSuchElementException("there is no such user with id " + id);
+            throw getNoSuchElementException("user", id);
         }
         if (storage.values().stream().anyMatch(a -> a.getEmail().equals(element.getEmail()))) {
             throw new UserAlreadyExistsException("there already is user with such email");

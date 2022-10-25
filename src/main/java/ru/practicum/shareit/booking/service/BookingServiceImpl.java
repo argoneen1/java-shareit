@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -75,8 +76,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Optional<Booking> findById(Long requesterId, Long bookingId) {
-        Optional<Booking> booking = repository.findById(bookingId);
+    public Optional<Booking> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    @Override
+    public Optional<Booking> findByIdWithRequesterCheck(Long requesterId, Long bookingId) {
+        Optional<Booking> booking = findById(bookingId);
         if (booking.isPresent()) {
             Booking bookingGet = booking.get();
             if (!(bookingGet.getBooker().getId().equals(requesterId) ||
@@ -89,7 +95,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> findByBooker(Long sharerId, BookingRequestsState state, int from, int size) {
+    public List<Booking> findByBooker(Long sharerId, BookingRequestsState state, Pageable page) {
         if (userService.findById(sharerId).isEmpty()) {
             throw getNoSuchElementException("user", sharerId);
         }
@@ -101,11 +107,11 @@ public class BookingServiceImpl implements BookingService {
                 BookingRequestsState.CURRENT,
                 BookingRequestsState.WAITING,
                 BookingRequestsState.REJECTED,
-                PageRequest.of(from, size)).getContent();
+                page).getContent();
     }
 
     @Override
-    public List<Booking> findByOwner(Long sharerId, BookingRequestsState state, int from, int size) {
+    public List<Booking> findByOwner(Long sharerId, BookingRequestsState state, Pageable page) {
         if (userService.findById(sharerId).isEmpty()) {
             throw getNoSuchElementException("user", sharerId);
         }
@@ -117,7 +123,7 @@ public class BookingServiceImpl implements BookingService {
                 BookingRequestsState.CURRENT,
                 BookingRequestsState.WAITING,
                 BookingRequestsState.REJECTED,
-                PageRequest.of(from, size)).getContent();
+                page).getContent();
     }
 
 }

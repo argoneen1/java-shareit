@@ -2,10 +2,12 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.utils.EndpointPaths;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -13,6 +15,7 @@ import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.shareit.utils.Constants.DEFAULT_PAGE_SIZE;
 import static ru.practicum.shareit.utils.Constants.USER_HTTP_HEADER;
 import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 
@@ -22,7 +25,7 @@ import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 @RestController
 @Slf4j
 @Validated
-@RequestMapping("/items")
+@RequestMapping(EndpointPaths.ITEM_ENDPOINT)
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService service;
@@ -60,28 +63,39 @@ public class ItemController {
 
     @GetMapping
     public List<ItemGetDto> getAll(@RequestHeader(USER_HTTP_HEADER) Long sharerId,
-                                   @RequestParam(value = "from", defaultValue = "0", required = false)
+                                   @RequestParam(value = "from",
+                                           defaultValue = "0",
+                                           required = false)
                                    @PositiveOrZero
                                    int from,
-                                   @RequestParam(value = "size", defaultValue = "2147483646", required = false)
+
+                                   @RequestParam(value = "size",
+                                           defaultValue = DEFAULT_PAGE_SIZE,
+                                           required = false)
+
                                    @Positive
                                    int size) {
-        return service.findAllByOwnerId(sharerId, from / size, size).stream()
+        return service.findAllByOwnerId(sharerId, PageRequest.of( from / size, size)).stream()
                 .map(a -> itemMapper.toItemGetDto(a, sharerId))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/search")
     public List<ItemGetDto> search(@PathParam("text") String text,
-                                   @RequestParam(value = "from", defaultValue = "0", required = false)
+                                   @RequestParam(value = "from",
+                                           defaultValue = "0",
+                                           required = false)
                                    @PositiveOrZero
                                    int from,
-                                   @RequestParam(value = "size", defaultValue = "2147483646", required = false)
+
+                                   @RequestParam(value = "size",
+                                           defaultValue = DEFAULT_PAGE_SIZE,
+                                           required = false)
                                    @Positive
                                    int size) {
         return text.isBlank() ?
                 List.of() :
-                service.search(text, from / size, size).stream()
+                service.search(text, PageRequest.of( from / size, size)).stream()
                         .map(a -> itemMapper.toItemGetDto(a, 0L))
                         .collect(Collectors.toList());
     }

@@ -31,7 +31,7 @@ public class ItemRequest {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "requester_id", referencedColumnName = "id")
+    @JoinColumn(name = "requester_id", referencedColumnName = "id", nullable = false)
     private User requester;
 
     @Column(name = "description", nullable = false)

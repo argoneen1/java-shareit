@@ -17,7 +17,6 @@ public class ItemMapper {
 
     private final UserService userService;
     private final ItemRequestService itemRequestService;
-
     private final BookingRepository bookingRepository;
 
     public ItemMapper(@Lazy UserService userService,
@@ -45,7 +44,6 @@ public class ItemMapper {
             nextBooking = BookingMapper.toSecondLevel(bookingRepository.findNext(item.getId()).orElse(null));
         }
         return new ItemGetDto(
-
                 item.getId(),
                 item.getName(),
                 item.getDescription(),

@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.model.Status;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,8 +41,12 @@ public class ItemMapper {
         BookingSecondLevelDto lastBooking = null;
         BookingSecondLevelDto nextBooking = null;
         if (item.getOwner().getId().equals(userId)) {
-            lastBooking = BookingMapper.toSecondLevel(bookingRepository.findLast(item.getId()).orElse(null));
-            nextBooking = BookingMapper.toSecondLevel(bookingRepository.findNext(item.getId()).orElse(null));
+            lastBooking = BookingMapper.toSecondLevel(
+                    bookingRepository.findFirstByItemIdIsAndEndBeforeOrderByEndDesc(item.getId(),
+                            LocalDateTime.now()).orElse(null));
+            nextBooking = BookingMapper.toSecondLevel(
+                    bookingRepository.findFirstByItemIdIsAndStartAfterOrderByStartAsc(item.getId(),
+                            LocalDateTime.now()).orElse(null));
         }
         return new ItemGetDto(
                 item.getId(),

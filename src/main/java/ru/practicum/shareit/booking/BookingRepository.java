@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingRequestsState;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -50,17 +51,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                             BookingRequestsState rejected,
                                             Pageable pageable);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.item.id = :itemId and " +
-            "b.end < current_timestamp " +
-            "order by b.end desc")
-    Optional<Booking> findLast(Long itemId);
+    Optional<Booking> findFirstByItemIdIsAndEndBeforeOrderByEndDesc(Long itemId, LocalDateTime time);
+    Optional<Booking> findFirstByItemIdIsAndStartAfterOrderByStartAsc(Long itemId, LocalDateTime time);
 
-    @Query("select b " +
-            "from Booking b " +
-            "where b.item.id = :itemId and " +
-            "b.start > current_timestamp " +
-            "order by b.start asc")
-    Optional<Booking> findNext(Long itemId);
 }

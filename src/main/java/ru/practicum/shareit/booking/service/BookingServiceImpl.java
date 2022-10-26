@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -38,7 +37,8 @@ public class BookingServiceImpl implements BookingService {
         validationOnCreate(booking);
         booking.setStatus(Status.WAITING);
         Long id = repository.save(bookingMapper.toBooking(booking)).getId();
-        return repository.findById(id).orElseThrow(() -> getNoSuchElementException("booking", id));
+        return repository.findById(id)
+                .orElseThrow(() -> getNoSuchElementException("booking", id));
     }
 
     private void validationOnCreate(BookingCreateDto booking) {
@@ -56,21 +56,29 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking confirm(Long sharerId, Long bookingId, @NonNull Boolean isApproved) {
+    public Booking confirm(Long sharerId,
+                           Long bookingId,
+                           @NonNull Boolean isApproved) {
         Booking booking = repository.findById(bookingId)
                 .orElseThrow(() -> getNoSuchElementException("booking", bookingId));
         validationOnConfirm(sharerId, booking);
         booking.setStatus(isApproved ? Status.APPROVED : Status.REJECTED);
         repository.save(booking);
-        return repository.findById(bookingId).orElseThrow(() -> getNoSuchElementException("booking", bookingId));
+        return repository.findById(bookingId)
+                .orElseThrow(() -> getNoSuchElementException("booking", bookingId));
     }
 
     private void validationOnConfirm(Long sharerId, Booking booking) {
         Item item = itemService.findById(booking.getItem().getId())
                 .orElseThrow(() -> getNoSuchElementException("user", sharerId));
         if (!item.getOwner().getId().equals(sharerId)) {
-            throw new NoSuchElementException("got id (" + sharerId + ") and item owner id (" + item.getOwner() + ") doesn't matches");
-        } else if (booking.getStatus() == Status.APPROVED || booking.getStatus() == Status.REJECTED) {
+            throw new NoSuchElementException("got id (" +
+                    sharerId +
+                    ") and item owner id (" +
+                    item.getOwner() +
+                    ") doesn't matches");
+        } else if (booking.getStatus() == Status.APPROVED ||
+                booking.getStatus() == Status.REJECTED) {
             throw new IllegalArgumentException("trying to change status after confirmation answer");
         }
     }

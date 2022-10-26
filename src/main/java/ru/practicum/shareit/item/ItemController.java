@@ -75,7 +75,7 @@ public class ItemController {
 
                                    @Positive
                                    int size) {
-        return service.findAllByOwnerId(sharerId, PageRequest.of( from / size, size)).stream()
+        return service.findAllByOwnerId(sharerId, PageRequest.of(from / size, size)).stream()
                 .map(a -> itemMapper.toItemGetDto(a, sharerId))
                 .collect(Collectors.toList());
     }
@@ -95,7 +95,7 @@ public class ItemController {
                                    int size) {
         return text.isBlank() ?
                 List.of() :
-                service.search(text, PageRequest.of( from / size, size)).stream()
+                service.search(text, PageRequest.of(from / size, size)).stream()
                         .map(a -> itemMapper.toItemGetDto(a, 0L))
                         .collect(Collectors.toList());
     }

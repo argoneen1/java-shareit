@@ -51,21 +51,22 @@ public class UserController {
     @GetMapping("/{id}")
     public UserGetDto findById(@PathVariable Long id) {
         return UserMapper.toUserDto(
-                service.findById(id).orElseThrow(() -> getNoSuchElementException("user", id)));
+                service.findById(id)
+                        .orElseThrow(() -> getNoSuchElementException("user", id)));
     }
 
     @GetMapping
     public List<UserGetDto> findAll(@RequestParam(value = "from",
             defaultValue = "0",
             required = false)
-                                        @PositiveOrZero
-                                        int from,
+                                    @PositiveOrZero
+                                    int from,
 
                                     @RequestParam(value = "size",
                                             defaultValue = DEFAULT_PAGE_SIZE,
                                             required = false)
-                                        @Positive
-                                        int size) {
+                                    @Positive
+                                    int size) {
         return service.findAll(PageRequest.of(from / size, size)).stream()
                 .map(UserMapper::toUserDto).collect(Collectors.toList());
     }

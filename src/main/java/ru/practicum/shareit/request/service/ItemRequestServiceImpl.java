@@ -1,9 +1,7 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.request.ItemRequest;
@@ -43,7 +41,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequest> findAllPaging(Long requesterId, Pageable page) {
-        return repository.findAllByNotRequesterIdWithPageable(
+        return repository.findAllByRequesterIdIsNot(
                         requesterId,
                         page)
                 .getContent();

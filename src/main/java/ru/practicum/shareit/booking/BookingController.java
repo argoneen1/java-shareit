@@ -33,7 +33,7 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingGetDto post(@RequestHeader(USER_HTTP_HEADER) Long bookerId, // TODO: протестировать константа в application.properties -> @Value над константой -> аннотация
+    public BookingGetDto post(@RequestHeader(USER_HTTP_HEADER) Long bookerId,
                               @RequestBody BookingCreateDto element) {
         element.setBooker(bookerId);
         return BookingMapper.toGetDto(service.create(element));
@@ -73,7 +73,7 @@ public class BookingController {
                                             @Positive
                                             int size) {
 
-        return service.findByBooker(sharerId, state, PageRequest.of(from/ size, size) )
+        return service.findByBooker(sharerId, state, PageRequest.of(from / size, size))
                 .stream()
                 .map(BookingMapper::toGetDto)
                 .collect(Collectors.toList());
@@ -98,7 +98,7 @@ public class BookingController {
                                                    required = false)
                                            @Positive
                                            int size) {
-        return service.findByOwner(sharerId, state, PageRequest.of(from/ size, size))
+        return service.findByOwner(sharerId, state, PageRequest.of(from / size, size))
                 .stream()
                 .map(BookingMapper::toGetDto)
                 .collect(Collectors.toList());

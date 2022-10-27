@@ -160,4 +160,20 @@ public class ItemDtoTest {
                         null)));
 
     }
+
+    @Test
+    void toItemWithRequest() {
+        when(userService.findById(1L))
+                .thenReturn(Optional.ofNullable(users.get(0)));
+        when(itemRequestService.findById(any()))
+                .thenReturn(Optional.empty());
+        Assertions.assertEquals(returnedItemsFromService.get(1),
+                itemMapper.toItem(new ItemInsertDto(2L,
+                        returnedItemsFromService.get(1).getName(),
+                        returnedItemsFromService.get(1).getDescription(),
+                        returnedItemsFromService.get(1).getStatus() == Status.AVAILABLE,
+                        users.get(0).getId(),
+                        2L)));
+
+    }
 }

@@ -218,6 +218,16 @@ public class ItemControllerTest {
     }
 
     @Test
+    @Order(5)
+    void search() throws Exception {
+        when(service.search(eq("m1n"), any()))
+                .thenReturn(List.of(returnedItemsFromService.get(0)));
+        mvc.perform(getStandardRequest(get(TEST_ENDPOINT + "/search?text=m1n"), null, 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(returnedItemsFromController.get(0).getId()), Long.class));
+    }
+
+    @Test
     @Order(6)
     void getByIdError() throws Exception {
         mvc.perform(getStandardRequest(get(TEST_ENDPOINT + "/99"), null, 1))

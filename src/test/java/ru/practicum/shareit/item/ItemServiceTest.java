@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.dto.CommentInsertDto;
 import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemInsertDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.exceptions.OwnerIdNotMatches;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.Status;
@@ -145,6 +146,49 @@ public class ItemServiceTest {
         when(repository.save(any()))
                 .thenReturn(returnedItemsFromService.get(0));
         assertThrows(NoSuchElementException.class, () -> service.create(item1InsertDto));
+    }
+
+    @Test
+    void updateFailNoSuchUser() {
+        ItemInsertDto updateItem = new ItemInsertDto(1L,
+                "updateName",
+                null,
+                null,
+                users.get(0).getId(),
+                null);
+        when(userService.findById(any()))
+                .thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> service.update(updateItem));
+    }
+
+    @Test
+    void updateFailNoSuchItem() {
+        ItemInsertDto updateItem = new ItemInsertDto(1L,
+                "updateName",
+                null,
+                null,
+                users.get(0).getId(),
+                null);
+        when(userService.findById(any()))
+                .thenReturn(Optional.ofNullable(users.get(0)));
+        when(repository.findById(any()))
+                .thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> service.update(updateItem));
+    }
+
+    @Test
+    void updateFailUpdaterAndOwnerIdNotEquals() {
+        ItemInsertDto updateItem = new ItemInsertDto(1L,
+                "updateName",
+                null,
+                null,
+                users.get(1).getId(),
+                null);
+        when(userService.findById(any()))
+                .thenReturn(Optional.ofNullable(users.get(0)));
+        when(repository.findById(any()))
+                .thenReturn(Optional.ofNullable(returnedItemsFromService.get(0)));
+        assertThrows(OwnerIdNotMatches.class, () -> service.update(updateItem));
     }
 
     @Test

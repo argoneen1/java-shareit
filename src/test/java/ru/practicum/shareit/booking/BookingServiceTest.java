@@ -174,6 +174,24 @@ public class BookingServiceTest {
     }
 
     @Test
+    void createItemSuccess() {
+        BookingCreateDto booker = new BookingCreateDto(1L,
+                2L,
+                timestamps.get(0),
+                timestamps.get(1),
+                null);
+        when(itemService.findById(any()))
+                .thenReturn(Optional.of(returnedItemsFromService.get(0)));
+        when(userService.findById(any()))
+                .thenReturn(Optional.ofNullable(users.get(1)));
+        when(repository.save(any()))
+                .thenReturn(bookings.get(0));
+        when(repository.findById(any()))
+                .thenReturn(Optional.ofNullable(bookings.get(0)));
+        Assertions.assertEquals(bookings.get(0), service.create(booker));
+    }
+
+    @Test
     void confirmFailWhenNoSuchBooking() {
         when(repository.findById(any()))
                 .thenReturn(Optional.empty());

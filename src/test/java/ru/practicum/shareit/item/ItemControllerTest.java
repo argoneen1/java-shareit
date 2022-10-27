@@ -299,77 +299,8 @@ public class ItemControllerTest {
     }
 
     @Test
-    @Order(10)
-    void updateUserEmail() throws Exception {
-        Item returnedUser = new Item(1L,
-                "item1nameUpdated",
-                users.get(0),
-                "item1descriptionUpdated",
-                null,
-                Status.AVAILABLE);
-        ItemGetDto insertedDto = new ItemGetDto(1L,
-                "item1nameUpdated",
-                "item1descriptionUpdated",
-                true,
-                null,
-                null,
-                null,
-                List.of(new CommentGetDto(1L, "comment1authorName", "comment1text", Instant.now()))
-        );
-        when(service.update(any()))
-                .thenReturn(returnedUser);
-        mvc.perform(getStandardRequest(patch(TEST_ENDPOINT + "/1"), insertedDto, 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id",
-                        is(returnedItemsFromController.get(0).getId()), Long.class))
-                .andExpect(jsonPath("$.name",
-                        is(returnedItemsFromController.get(0).getName())))
-                .andExpect(jsonPath("$.description",
-                        is(returnedItemsFromController.get(0).getDescription())))
-                .andExpect(jsonPath("$.requestId",
-                        is(returnedItemsFromController.get(0).getRequestId()), Long.class))
-                .andExpect(jsonPath("$.available",
-                        is(returnedItemsFromController.get(0).getAvailable())));
-    }
-
-    @Test
-    @Order(11)
-    void updateUserAll() throws Exception {
-        Item returnedUser = new Item(1L,
-                "item1nameUpdated",
-                users.get(0),
-                "item1descriptionUpdated",
-                null,
-                Status.AVAILABLE);
-        ItemGetDto insertedDto = new ItemGetDto(1L,
-                "item1nameUpdated",
-                "item1descriptionUpdated",
-                true,
-                null,
-                null,
-                null,
-                List.of(new CommentGetDto(1L, "comment1authorName", "comment1text", Instant.now()))
-        );
-        when(service.update(any()))
-                .thenReturn(returnedUser);
-        mvc.perform(getStandardRequest(patch(TEST_ENDPOINT + "/1"), insertedDto, 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id",
-                        is(returnedItemsFromController.get(0).getId()), Long.class))
-                .andExpect(jsonPath("$.name",
-                        is(returnedItemsFromController.get(0).getName())))
-                .andExpect(jsonPath("$.description",
-                        is(returnedItemsFromController.get(0).getDescription())))
-                .andExpect(jsonPath("$.requestId",
-                        is(returnedItemsFromController.get(0).getRequestId()), Long.class))
-                .andExpect(jsonPath("$.available",
-                        is(returnedItemsFromController.get(0).getAvailable())));
-    }
-
-    @Test
     @Order(12)
     void userDelete() throws Exception {
-
         mvc.perform(getStandardRequest(delete(TEST_ENDPOINT + "/1"), null, 1))
                 .andExpect(status().isOk());
         mvc.perform(getStandardRequest(get(TEST_ENDPOINT + "/1"), null, 1))
@@ -380,8 +311,9 @@ public class ItemControllerTest {
     @Test
     @Order(13)
     void userDeleteError() throws Exception {
+        doThrow(new NoSuchElementException("w")).when(service).delete(any());
         mvc.perform(getStandardRequest(delete(TEST_ENDPOINT + "/99"), null, 1))
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound());
         verify(service, times(1)).delete(any());
     }
 

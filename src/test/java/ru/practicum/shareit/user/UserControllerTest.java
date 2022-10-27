@@ -201,8 +201,9 @@ public class UserControllerTest {
     @Test
     @Order(13)
     void userDeleteError() throws Exception {
+        doThrow(new NoSuchElementException("w")).when(service).delete(any());
         getStandardRequest(delete(TEST_ENDPOINT + "/99"), null)
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound());
         verify(service, times(1)).delete(any());
     }
 

@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingSecondLevelDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.ItemGetDto;
+import ru.practicum.shareit.item.dto.ItemInsertDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.Status;
@@ -106,6 +107,14 @@ public class ItemDtoTest {
                     null,
                     bookingSecondLevelDtos.get(0),
                     bookingSecondLevelDtos.get(1),
+                    List.of()),
+            new ItemGetDto(2L,
+                    returnedItemsFromService.get(1).getName(),
+                    returnedItemsFromService.get(1).getDescription(),
+                    returnedItemsFromService.get(1).getStatus() == Status.AVAILABLE,
+                    1L,
+                    null,
+                    null,
                     List.of())
 
     );
@@ -119,17 +128,36 @@ public class ItemDtoTest {
     }
 
     @Test
-    void toGetDto() {
+    void toGetDtoWithBookings() {
         when(bookingRepository.findFirstByItemIdIsAndEndBeforeOrderByEndDesc(eq(1L), any()))
                 .thenReturn(Optional.ofNullable(bookings.get(0)));
         when(bookingRepository.findFirstByItemIdIsAndStartAfterOrderByStartAsc(eq(1L), any()))
                 .thenReturn(Optional.ofNullable(bookings.get(2)));
-        itemMapper.toItemGetDto(returnedItemsFromService.get(0), 1L);
         Assertions.assertEquals(itemGetDtos.get(0), itemMapper.toItemGetDto(returnedItemsFromService.get(0), 1L));
     }
 
     @Test
-    void toItemTest() {
+    void toGetDtoWithoutBookings() {
+        when(bookingRepository.findFirstByItemIdIsAndEndBeforeOrderByEndDesc(eq(2L), any()))
+                .thenReturn(Optional.empty());
+        when(bookingRepository.findFirstByItemIdIsAndStartAfterOrderByStartAsc(eq(2L), any()))
+                .thenReturn(Optional.empty());
+        Assertions.assertEquals(itemGetDtos.get(1), itemMapper.toItemGetDto(returnedItemsFromService.get(1), 2L));
+    }
+
+    @Test
+    void toItem() {
+        when(userService.findById(1L))
+                .thenReturn(Optional.ofNullable(users.get(0)));
+        when(itemRequestService.findById(any()))
+                .thenReturn(Optional.empty());
+        Assertions.assertEquals(returnedItemsFromService.get(0),
+                itemMapper.toItem(new ItemInsertDto(1L,
+                        returnedItemsFromService.get(0).getName(),
+                        returnedItemsFromService.get(0).getDescription(),
+                        returnedItemsFromService.get(0).getStatus() == Status.AVAILABLE,
+                        returnedItemsFromService.get(0).getOwner().getId(),
+                        null)));
 
     }
 }

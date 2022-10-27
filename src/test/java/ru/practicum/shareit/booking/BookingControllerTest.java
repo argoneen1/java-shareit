@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingGetDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingRequestsState;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.ItemSecondLevelDto;
 import ru.practicum.shareit.item.model.Item;
@@ -22,12 +23,13 @@ import ru.practicum.shareit.user.model.User;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.practicum.shareit.utils.Constants.USER_HTTP_HEADER;
@@ -193,17 +195,39 @@ public class BookingControllerTest {
     }
 
     @Test
-    void findByIdTest() {
+    void findByIdFailNoSuchUserTest() throws Exception {
+        when(service.findByIdWithRequesterCheck(any(), any()))
+                .thenReturn(Optional.empty());
+        mvc.perform(getStandardRequest(get(TEST_ENDPOINT + "/1"), null, 1))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void findByIdTest() throws Exception {
+        when(service.findByIdWithRequesterCheck(any(), any()))
+                .thenReturn(Optional.of(bookings.get(0)));
+        mvc.perform(getStandardRequest(get(TEST_ENDPOINT + "/1"), null, 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(getDtos.get(0).getId()), Long.class));
+    }
+
+    @Test
+    void findByBookerTest() throws Exception {
+        when(service.findByBooker(eq(1L), eq(BookingRequestsState.ALL), any()))
+                .thenReturn(List.of(bookings.get(1), bookings.get(2)));
+        mvc.perform(getStandardRequest(get(TEST_ENDPOINT), null, 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(getDtos.get(1).getId()), Long.class))
+                .andExpect(jsonPath("$[1].id", is(getDtos.get(2).getId()), Long.class));
 
     }
 
     @Test
-    void findByBookerTest() {
-
-    }
-
-    @Test
-    void findByOwner() {
-
+    void findByOwner() throws Exception {
+        when(service.findByOwner(eq(1L), eq(BookingRequestsState.ALL), any()))
+                .thenReturn(List.of(bookings.get(0)));
+        mvc.perform(getStandardRequest(get(TEST_ENDPOINT + "/owner"), null, 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(getDtos.get(0).getId()), Long.class));
     }
 }

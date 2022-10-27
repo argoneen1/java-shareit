@@ -8,7 +8,7 @@ import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -22,7 +22,7 @@ import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRequestRepository repository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     private final ItemRequestMapper itemRequestMapper;
 
@@ -33,7 +33,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequest> findAllByRequesterId(Long requesterId, Pageable page) {
-        if (userRepository.findById(requesterId).isEmpty()) {
+        if (userService.findById(requesterId).isEmpty()) {
             throw getNoSuchElementException("user", requesterId);
         }
         return repository.findAllByRequesterId(requesterId, page).getContent();
@@ -41,15 +41,15 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequest> findAllExceptRequester(Long requesterId, Pageable page) {
-        return repository.findAllByRequesterIdIsNot(
-                        requesterId,
-                        page)
-                .getContent();
+        if (userService.findById(requesterId).isEmpty()) {
+            throw getNoSuchElementException("user", requesterId);
+        }
+        return repository.findAllByRequesterIdIsNot(requesterId, page).getContent();
     }
 
     @Override
     public Optional<ItemRequest> findById(Long requesterId, Long itemRequestId) {
-        if (userRepository.findById(requesterId).isEmpty()) {
+        if (userService.findById(requesterId).isEmpty()) {
             throw getNoSuchElementException("user", requesterId);
         }
         return findById(itemRequestId);

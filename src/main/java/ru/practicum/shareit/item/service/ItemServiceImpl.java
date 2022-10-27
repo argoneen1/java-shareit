@@ -46,18 +46,18 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Validated(ValidationMarker.OnUpdate.class)
     public Item update(@Valid ItemInsertDto element) {
-        Long elementId = element.getId();
         Long updatingItemOwnerId = element.getOwner();
         if (userService.findById(updatingItemOwnerId).isEmpty()) {
-            throw getNoSuchElementException("item", updatingItemOwnerId);
+            throw getNoSuchElementException("user", updatingItemOwnerId);
         }
-        Item updatingItem = repository.findById(elementId)
+        Item updatingItem = repository.findById(element.getId())
                 .orElseThrow(() -> getNoSuchElementException("item", element.getId()));
         Long itemOwnerId = updatingItem.getOwner().getId();
         if (!updatingItemOwnerId.equals(itemOwnerId)) {
             throw new OwnerIdNotMatches(updatingItemOwnerId, itemOwnerId);
         }
         return repository.save(fillFieldsOnUpdate(element, updatingItem));
+
     }
 
     private Item fillFieldsOnUpdate(ItemInsertDto element, Item updatingItem) {

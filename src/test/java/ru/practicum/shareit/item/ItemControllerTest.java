@@ -12,10 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.item.dto.CommentGetDto;
-import ru.practicum.shareit.item.dto.ItemGetDto;
-import ru.practicum.shareit.item.dto.ItemInsertDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.Status;
 import ru.practicum.shareit.item.service.ItemService;
@@ -333,5 +331,21 @@ public class ItemControllerTest {
                 .thenThrow(new NoSuchElementException("no such element"));
         mvc.perform(getStandardRequest(patch(TEST_ENDPOINT + "/99"), item1InsertDto, 1))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void postComment() throws Exception {
+        Comment comment = new Comment(1L,
+                "comment1test",
+                returnedItemsFromService.get(0),
+                users.get(0),
+                Instant.now());
+        CommentInsertDto insertDto = new CommentInsertDto(1L, 1L, "comment1test");
+        when(service.postComment(any()))
+                .thenReturn(comment);
+        mvc.perform(getStandardRequest(post(TEST_ENDPOINT + "/1/comment"), insertDto, 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id",
+                        is(comment.getId()), Long.class));
     }
 }

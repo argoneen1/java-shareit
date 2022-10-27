@@ -4,10 +4,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.dto.CommentInsertDto;
+import ru.practicum.shareit.item.dto.CommentMapper;
+import ru.practicum.shareit.item.dto.ItemInsertDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.Status;
+import ru.practicum.shareit.item.repositories.CommentRepository;
+import ru.practicum.shareit.item.repositories.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.request.ItemRequest;
@@ -76,33 +81,6 @@ public class ItemServiceTest {
                     users.get(0), ru.practicum.shareit.booking.model.Status.WAITING)
     );
 
-    List<ItemGetDto> returnedItemsFromController = List.of(
-            new ItemGetDto(1L,
-                    "item1name",
-                    "item1description",
-                    true,
-                    null,
-                    null,
-                    null,
-                    List.of(new CommentGetDto(1L, "comment1authorName", "comment1text", Instant.now()))
-            ),
-            new ItemGetDto(2L,
-                    "питса",
-                    "вкусная питса \uD83C\uDF55 \uD83C\uDF55",
-                    true,
-                    1L,
-                    null,
-                    null,
-                    null),
-            new ItemGetDto(3L,
-                    "item3name",
-                    "item3description",
-                    false,
-                    null,
-                    null,
-                    null,
-                    null)
-    );
 
     @BeforeEach
     void beforeEach() {

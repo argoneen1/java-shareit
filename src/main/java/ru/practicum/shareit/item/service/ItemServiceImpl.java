@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.item.CommentRepository;
-import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentInsertDto;
 import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemInsertDto;
@@ -14,6 +12,8 @@ import ru.practicum.shareit.item.exceptions.OwnerIdNotMatches;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.Status;
+import ru.practicum.shareit.item.repositories.CommentRepository;
+import ru.practicum.shareit.item.repositories.ItemRepository;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.utils.validation.ValidationMarker;
 

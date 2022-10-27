@@ -88,6 +88,7 @@ public class ItemControllerTest {
                     null,
                     Status.RENTED)
     );
+
     List<ItemGetDto> returnedItemsFromController = List.of(
             new ItemGetDto(1L,
                     "item1name",

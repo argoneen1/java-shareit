@@ -64,7 +64,7 @@ public class BookingServiceImpl implements BookingService {
         validationOnConfirm(sharerId, booking);
         booking.setStatus(isApproved ? Status.APPROVED : Status.REJECTED);
         repository.save(booking);
-        return repository.findById(bookingId)
+        return findById(bookingId)
                 .orElseThrow(() -> getNoSuchElementException("booking", bookingId));
     }
 

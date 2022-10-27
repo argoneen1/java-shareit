@@ -108,7 +108,7 @@ public class UserControllerTest {
     @Test
     @Order(5)
     void getAll() throws Exception {
-        when(service.findAll(PageRequest.of(0, 20)))
+        when(service.findAll(any()))
                 .thenReturn(returnedUsers);
         getStandardRequest(get(TEST_ENDPOINT), null)
                 .andExpect(status().isOk())

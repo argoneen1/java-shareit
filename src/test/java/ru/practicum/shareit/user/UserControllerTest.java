@@ -32,21 +32,22 @@ import static ru.practicum.shareit.utils.EndpointPaths.USER_ENDPOINT;
 public class UserControllerTest {
 
     public static final String TEST_ENDPOINT = USER_ENDPOINT;
+    public static List<UserInsertDto> userInsertDtos = List.of(
+            new UserInsertDto(null, "user1name", "user1@email.test"),
+            new UserInsertDto(null, "user2name", "user2@email.test"),
+            new UserInsertDto(null, "user3name", "user3@email.test")
+    );
+    public static List<User> returnedUsers = List.of(
+            new User(1L, "user1name", "user1@email.test"),
+            new User(2L, "user2name", "user2@email.test"),
+            new User(3L, "user3name", "user3@email.test")
+    );
     @MockBean
     UserService service;
     @Autowired
     ObjectMapper mapper;
     @Autowired
     private MockMvc mvc;
-    private final UserInsertDto user1InsertDto = new UserInsertDto(null, "user1name", "user1@email.test");
-    private final UserInsertDto user2InsertDto = new UserInsertDto(null, "user2name", "user2@email.test");
-    private final UserInsertDto user3InsertDto = new UserInsertDto(null, "user3name", "user3@email.test");
-
-    List<User> returnedUsers = List.of(
-            new User(1L, "user1name", "user1@email.test"),
-            new User(2L, "user2name", "user2@email.test"),
-            new User(3L, "user3name", "user3@email.test")
-    );
 
     public <T> ResultActions getStandardRequest(MockHttpServletRequestBuilder requestBuilders,
                                                 T mappedValue)
@@ -64,7 +65,7 @@ public class UserControllerTest {
     void saveNewUser() throws Exception {
         when(service.create(any()))
                 .thenReturn(returnedUsers.get(0));
-        getStandardRequest(post(TEST_ENDPOINT), user1InsertDto)
+        getStandardRequest(post(TEST_ENDPOINT), userInsertDtos.get(0))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(returnedUsers.get(0).getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(returnedUsers.get(0).getName())))
@@ -76,7 +77,7 @@ public class UserControllerTest {
     void saveUser2() throws Exception {
         when(service.create(any()))
                 .thenReturn(returnedUsers.get(1));
-        getStandardRequest(post(TEST_ENDPOINT), user2InsertDto)
+        getStandardRequest(post(TEST_ENDPOINT), userInsertDtos.get(1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(returnedUsers.get(1).getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(returnedUsers.get(1).getName())))
@@ -88,7 +89,7 @@ public class UserControllerTest {
     void saveUser3() throws Exception {
         when(service.create(any()))
                 .thenReturn(returnedUsers.get(2));
-        getStandardRequest(post(TEST_ENDPOINT), user3InsertDto)
+        getStandardRequest(post(TEST_ENDPOINT), userInsertDtos.get(2))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(returnedUsers.get(2).getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(returnedUsers.get(2).getName())))
@@ -100,8 +101,7 @@ public class UserControllerTest {
     void saveUserErrorDuplicateEmail() throws Exception {
         when(service.create(any()))
                 .thenThrow(new IllegalArgumentException("a"));
-        user3InsertDto.setName("blabla");
-        getStandardRequest(post(TEST_ENDPOINT), user3InsertDto)
+        getStandardRequest(post(TEST_ENDPOINT), userInsertDtos.get(2))
                 .andExpect(status().isBadRequest());
     }
 
@@ -206,12 +206,13 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
         verify(service, times(1)).delete(any());
     }
+
     @Test
     @Order(14)
     void userCreateError() throws Exception {
         when(service.create(any()))
                 .thenThrow(new IllegalArgumentException("w"));
-        getStandardRequest(post(TEST_ENDPOINT), user1InsertDto)
+        getStandardRequest(post(TEST_ENDPOINT), userInsertDtos.get(0))
                 .andExpect(status().isBadRequest());
     }
 
@@ -220,7 +221,7 @@ public class UserControllerTest {
     void userUpdateError() throws Exception {
         when(service.update(any()))
                 .thenThrow(new NoSuchElementException("no such element"));
-        getStandardRequest(patch(TEST_ENDPOINT + "/99"), user1InsertDto)
+        getStandardRequest(patch(TEST_ENDPOINT + "/99"), userInsertDtos.get(0))
                 .andExpect(status().isNotFound());
     }
 }

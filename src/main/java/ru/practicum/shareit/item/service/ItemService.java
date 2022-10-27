@@ -23,6 +23,6 @@ public interface ItemService {
 
     List<Item> search(String text, Pageable page);
 
-    Comment postComment(CommentInsertDto comment);
+    Comment postComment(@Valid CommentInsertDto comment);
 
 }

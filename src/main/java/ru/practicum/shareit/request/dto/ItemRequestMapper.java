@@ -6,9 +6,7 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
@@ -24,7 +22,9 @@ public class ItemRequestMapper {
                 request.getId(),
                 request.getDescription(),
                 request.getCreated(),
-                request.getItems().stream().map(ItemMapper::toSecondLevel).collect(Collectors.toList())
+                request.getItems().stream()
+                        .map(ItemMapper::toSecondLevel)
+                        .collect(Collectors.toList())
         );
     }
 
@@ -34,7 +34,7 @@ public class ItemRequestMapper {
                 userService.findById(request.getRequesterId())
                         .orElseThrow(() -> getNoSuchElementException("user", request.getRequesterId())),
                 request.getDescription(),
-                LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault())
+                LocalDateTime.now()
         );
     }
 }

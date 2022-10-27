@@ -12,9 +12,9 @@ public interface ItemRequestService {
 
     ItemRequest create(@Valid ItemRequestCreateDto element);
 
-    List<ItemRequest> findAllByRequesterId(Long RequesterId);
+    List<ItemRequest> findAllByRequesterId(Long requesterId, Pageable page);
 
-    List<ItemRequest> findAllPaging(Long requesterId, Pageable page);
+    List<ItemRequest> findAllExceptRequester(Long requesterId, Pageable page);
 
     Optional<ItemRequest> findById(Long requesterId, Long itemRequestId);
 

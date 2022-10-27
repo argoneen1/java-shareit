@@ -27,7 +27,7 @@ public class ItemRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     private Long id;
 
     @ManyToOne
@@ -37,7 +37,7 @@ public class ItemRequest {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "created", nullable = false)
+    @Column(name = "created", nullable = false, updatable = false)
     private LocalDateTime created;
 
     @OneToMany(mappedBy = "request", cascade = CascadeType.PERSIST)

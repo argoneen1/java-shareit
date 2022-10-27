@@ -43,7 +43,7 @@ public class ErrorHandlingControllerAdvices {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> userWithThisEmailAlreadyExists(final DataIntegrityViolationException e) {
-        return Map.of("user with this email already exists", e.getMessage());
+        return Map.of("user with this email already exists", e.getMessage() == null ? "" : e.getMessage());
     }
 
     @ExceptionHandler

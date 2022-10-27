@@ -14,15 +14,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("select b " +
             "from Booking b " +
-            "where b.booker.id = :bookerId and " +
+            "where b.booker.id = :sharerId and " +
             "(:state = :all or " +
             "(:state = :past and b.end < CURRENT_TIMESTAMP ) or " +
             "(:state = :future and b.start > CURRENT_TIMESTAMP) or " +
             "(:state = :current and b.start < CURRENT_TIMESTAMP and b.end > CURRENT_TIMESTAMP) or " +
             "(:state = :waiting and b.status = ru.practicum.shareit.booking.model.Status.WAITING) or " +
             "(:state = :rejected and b.status = ru.practicum.shareit.booking.model.Status.REJECTED)" +
-            ") order by b.end desc ")
-    Page<Booking> findByBookerIdAndState(Long bookerId, BookingRequestsState state,
+            ") " +
+            "order by b.end desc ")
+    Page<Booking> findByBookerIdAndState(Long sharerId, BookingRequestsState state,
                                          BookingRequestsState all,
                                          BookingRequestsState past,
                                          BookingRequestsState future,
@@ -33,7 +34,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("select b " +
             "from Booking b " +
-            "where b.item.owner.id = :bookerId and " +
+            "where b.item.owner.id = :sharerId and " +
             "(:state = :all or " +
             "(:state = :past and b.end < CURRENT_TIMESTAMP ) or " +
             "(:state = :future and b.start > CURRENT_TIMESTAMP) or " +
@@ -42,7 +43,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "(:state = :rejected and b.status = ru.practicum.shareit.booking.model.Status.REJECTED)" +
             ") " +
             "order by b.end desc ")
-    Page<Booking> findByItemOwnerIdAndState(Long bookerId, BookingRequestsState state,
+    Page<Booking> findByItemOwnerIdAndState(Long sharerId, BookingRequestsState state,
                                             BookingRequestsState all,
                                             BookingRequestsState past,
                                             BookingRequestsState future,
@@ -52,6 +53,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                             Pageable pageable);
 
     Optional<Booking> findFirstByItemIdIsAndEndBeforeOrderByEndDesc(Long itemId, LocalDateTime time);
+
     Optional<Booking> findFirstByItemIdIsAndStartAfterOrderByStartAsc(Long itemId, LocalDateTime time);
 
 }

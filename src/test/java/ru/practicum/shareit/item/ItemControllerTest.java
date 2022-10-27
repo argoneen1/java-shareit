@@ -1,14 +1,15 @@
 package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.item.dto.CommentGetDto;
@@ -34,10 +35,10 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.shareit.utils.Constants.USER_HTTP_HEADER;
 import static ru.practicum.shareit.utils.EndpointPaths.ITEM_ENDPOINT;
 
 @WebMvcTest(controllers = ItemController.class)
@@ -45,22 +46,6 @@ import static ru.practicum.shareit.utils.EndpointPaths.ITEM_ENDPOINT;
 public class ItemControllerTest {
 
     public static final String TEST_ENDPOINT = ITEM_ENDPOINT;
-    @MockBean
-    ItemService service;
-    @MockBean
-    private UserService userService;
-    @MockBean
-    private ItemRequestService itemRequestService;
-    @MockBean
-    private BookingRepository bookingRepository;
-
-    @MockBean
-    ItemMapper itemMapper;
-    @Autowired
-    ObjectMapper mapper;
-    @Autowired
-    private MockMvc mvc;
-
     private final ItemInsertDto item1InsertDto =
             new ItemInsertDto(null, "item1name", "item1description",
                     true, 1L, null);
@@ -70,7 +55,12 @@ public class ItemControllerTest {
     private final ItemInsertDto item3InsertDto =
             new ItemInsertDto(null, "item3name", "item3description",
                     true, 3L, null);
-
+    @MockBean
+    ItemService service;
+    @MockBean
+    ItemMapper itemMapper;
+    @Autowired
+    ObjectMapper mapper;
     List<User> users = List.of(
             new User(1L, "user1name", "user1@email.test"),
             new User(2L, "user2name", "user2@email.test"),
@@ -100,7 +90,6 @@ public class ItemControllerTest {
                     null,
                     Status.RENTED)
     );
-
     List<ItemGetDto> returnedItemsFromController = List.of(
             new ItemGetDto(1L,
                     "item1name",
@@ -128,24 +117,35 @@ public class ItemControllerTest {
                     null,
                     null)
     );
+    @MockBean
+    private UserService userService;
+    @MockBean
+    private ItemRequestService itemRequestService;
+    @MockBean
+    private BookingRepository bookingRepository;
+    @Autowired
+    private MockMvc mvc;
+
     @BeforeEach
     void setItemMapperSettings() {
-        when(itemMapper.toItemGetDto(returnedItemsFromService.get(0), any()))
+        when(itemMapper.toItemGetDto(eq(returnedItemsFromService.get(0)), any()))
                 .thenReturn(returnedItemsFromController.get(0));
-        when(itemMapper.toItemGetDto(returnedItemsFromService.get(1), any()))
+        when(itemMapper.toItemGetDto(eq(returnedItemsFromService.get(1)), any()))
                 .thenReturn(returnedItemsFromController.get(1));
-        when(itemMapper.toItemGetDto(returnedItemsFromService.get(2), any()))
+        when(itemMapper.toItemGetDto(eq(returnedItemsFromService.get(2)), any()))
                 .thenReturn(returnedItemsFromController.get(2));
     }
-    public <T> ResultActions getStandardRequest(MockHttpServletRequestBuilder requestBuilders,
-                                                T mappedValue)
-            throws Exception {
-        return mvc.perform(
+
+    public <T> MockHttpServletRequestBuilder getStandardRequest(MockHttpServletRequestBuilder requestBuilders,
+                                                                T mappedValue,
+                                                                int userId) throws Exception {
+        return
                 requestBuilders
                         .content(mapper.writeValueAsString(mappedValue))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON));
+                        .header(USER_HTTP_HEADER, userId)
+                        .accept(MediaType.APPLICATION_JSON);
     }
 
     @Test
@@ -153,7 +153,7 @@ public class ItemControllerTest {
     void save1() throws Exception {
         when(service.create(any()))
                 .thenReturn(returnedItemsFromService.get(0));
-        getStandardRequest(post(TEST_ENDPOINT), item1InsertDto)
+        mvc.perform(getStandardRequest(post(TEST_ENDPOINT), item1InsertDto, 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",
                         is(returnedItemsFromController.get(0).getId()), Long.class))
@@ -172,7 +172,7 @@ public class ItemControllerTest {
     void save2() throws Exception {
         when(service.create(any()))
                 .thenReturn(returnedItemsFromService.get(1));
-        getStandardRequest(post(TEST_ENDPOINT), item2InsertDto)
+        mvc.perform(getStandardRequest(post(TEST_ENDPOINT), item2InsertDto, 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",
                         is(returnedItemsFromController.get(1).getId()), Long.class))
@@ -191,7 +191,7 @@ public class ItemControllerTest {
     void save3() throws Exception {
         when(service.create(any()))
                 .thenReturn(returnedItemsFromService.get(2));
-        getStandardRequest(post(TEST_ENDPOINT), item3InsertDto)
+        mvc.perform(getStandardRequest(post(TEST_ENDPOINT), item3InsertDto, 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",
                         is(returnedItemsFromController.get(2).getId()), Long.class))
@@ -211,7 +211,7 @@ public class ItemControllerTest {
     void getAll() throws Exception {
         when(service.findAllByOwnerId(any(), any()))
                 .thenReturn(returnedItemsFromService);
-        getStandardRequest(get(TEST_ENDPOINT), null)
+        mvc.perform(getStandardRequest(get(TEST_ENDPOINT), null, 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(returnedItemsFromController.get(0).getId()), Long.class))
                 .andExpect(jsonPath("$[1].id", is(returnedItemsFromController.get(1).getId()), Long.class))
@@ -221,7 +221,7 @@ public class ItemControllerTest {
     @Test
     @Order(6)
     void getByIdError() throws Exception {
-        getStandardRequest(get(TEST_ENDPOINT + "/99"), null)
+        mvc.perform(getStandardRequest(get(TEST_ENDPOINT + "/99"), null, 1))
                 .andExpect(status().isNotFound());
     }
 
@@ -231,7 +231,7 @@ public class ItemControllerTest {
         when(service.findById(1L))
                 .thenReturn(Optional.of(returnedItemsFromService.get(0)));
         System.out.println(returnedItemsFromController.get(0).getId());
-        getStandardRequest(get(TEST_ENDPOINT + "/1"), null)
+        mvc.perform(getStandardRequest(get(TEST_ENDPOINT + "/1"), null, 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",
                         is(returnedItemsFromController.get(0).getId()), Long.class))
@@ -250,7 +250,7 @@ public class ItemControllerTest {
     void getUser2() throws Exception {
         when(service.findById(any()))
                 .thenReturn(Optional.of(returnedItemsFromService.get(1)));
-        getStandardRequest(get(TEST_ENDPOINT + "/1"), null)
+        mvc.perform(getStandardRequest(get(TEST_ENDPOINT + "/1"), null, 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",
                         is(returnedItemsFromController.get(1).getId()), Long.class))
@@ -284,7 +284,8 @@ public class ItemControllerTest {
         );
         when(service.update(any()))
                 .thenReturn(returnedUser);
-        getStandardRequest(patch(TEST_ENDPOINT + "/1"), insertedDto).andExpect(status().isOk())
+        mvc.perform(getStandardRequest(patch(TEST_ENDPOINT + "/1"), insertedDto, 1))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",
                         is(returnedItemsFromController.get(0).getId()), Long.class))
                 .andExpect(jsonPath("$.name",
@@ -317,7 +318,8 @@ public class ItemControllerTest {
         );
         when(service.update(any()))
                 .thenReturn(returnedUser);
-        getStandardRequest(patch(TEST_ENDPOINT + "/1"), insertedDto).andExpect(status().isOk())
+        mvc.perform(getStandardRequest(patch(TEST_ENDPOINT + "/1"), insertedDto, 1))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",
                         is(returnedItemsFromController.get(0).getId()), Long.class))
                 .andExpect(jsonPath("$.name",
@@ -350,7 +352,8 @@ public class ItemControllerTest {
         );
         when(service.update(any()))
                 .thenReturn(returnedUser);
-        getStandardRequest(patch(TEST_ENDPOINT + "/1"), insertedDto).andExpect(status().isOk())
+        mvc.perform(getStandardRequest(patch(TEST_ENDPOINT + "/1"), insertedDto, 1))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id",
                         is(returnedItemsFromController.get(0).getId()), Long.class))
                 .andExpect(jsonPath("$.name",
@@ -367,9 +370,9 @@ public class ItemControllerTest {
     @Order(12)
     void userDelete() throws Exception {
 
-        getStandardRequest(delete(TEST_ENDPOINT + "/1"), null)
+        mvc.perform(getStandardRequest(delete(TEST_ENDPOINT + "/1"), null, 1))
                 .andExpect(status().isOk());
-        getStandardRequest(get(TEST_ENDPOINT + "/1"), null)
+        mvc.perform(getStandardRequest(get(TEST_ENDPOINT + "/1"), null, 1))
                 .andExpect(status().isNotFound());
         verify(service, times(1)).delete(any());
     }
@@ -377,16 +380,17 @@ public class ItemControllerTest {
     @Test
     @Order(13)
     void userDeleteError() throws Exception {
-        getStandardRequest(delete(TEST_ENDPOINT + "/99"), null)
+        mvc.perform(getStandardRequest(delete(TEST_ENDPOINT + "/99"), null, 1))
                 .andExpect(status().isOk());
         verify(service, times(1)).delete(any());
     }
+
     @Test
     @Order(14)
     void userCreateError() throws Exception {
         when(service.create(any()))
                 .thenThrow(new IllegalArgumentException("w"));
-        getStandardRequest(post(TEST_ENDPOINT), item1InsertDto)
+        mvc.perform(getStandardRequest(post(TEST_ENDPOINT), item1InsertDto, 1))
                 .andExpect(status().isBadRequest());
     }
 
@@ -395,7 +399,7 @@ public class ItemControllerTest {
     void userUpdateError() throws Exception {
         when(service.update(any()))
                 .thenThrow(new NoSuchElementException("no such element"));
-        getStandardRequest(patch(TEST_ENDPOINT + "/99"), item1InsertDto)
+        mvc.perform(getStandardRequest(patch(TEST_ENDPOINT + "/99"), item1InsertDto, 1))
                 .andExpect(status().isNotFound());
     }
 }

@@ -40,27 +40,30 @@ public class ItemRequestController {
     }
 
     @GetMapping
-    public List<ItemRequestGetDto> findAllByRequesterId(@RequestHeader(USER_HTTP_HEADER) Long requesterId) {
-        return service.findAllByRequesterId(requesterId)
+    public List<ItemRequestGetDto>
+    findAllByRequesterId(@RequestHeader(USER_HTTP_HEADER) Long requesterId,
+                         @RequestParam(value = "from", defaultValue = "0", required = false)
+                         @PositiveOrZero
+                         int from,
+                         @RequestParam(value = "size", defaultValue = DEFAULT_PAGE_SIZE, required = false)
+                         @Positive
+                         int size) {
+        return service.findAllByRequesterId(requesterId, PageRequest.of(from, size))
                 .stream()
                 .map(itemRequestMapper::toGetDto)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/all")
-    public List<ItemRequestGetDto> findAll(@RequestHeader(USER_HTTP_HEADER) Long requesterId,
-                                           @RequestParam(value = "from",
-                                                   defaultValue = "0",
-                                                   required = false)
-                                           @PositiveOrZero
-                                           int from,
-
-                                           @RequestParam(value = "size",
-                                                   defaultValue = DEFAULT_PAGE_SIZE,
-                                                   required = false)
-                                           @Positive
-                                           int size) {
-        return service.findAllPaging(requesterId,
+    public List<ItemRequestGetDto>
+    findAll(@RequestHeader(USER_HTTP_HEADER) Long requesterId,
+            @RequestParam(value = "from", defaultValue = "0", required = false)
+            @PositiveOrZero
+            int from,
+            @RequestParam(value = "size", defaultValue = DEFAULT_PAGE_SIZE, required = false)
+            @Positive
+            int size) {
+        return service.findAllExceptRequester(requesterId,
                         PageRequest.of(from, size, Sort.Direction.DESC, "created"))
                 .stream()
                 .map(itemRequestMapper::toGetDto)

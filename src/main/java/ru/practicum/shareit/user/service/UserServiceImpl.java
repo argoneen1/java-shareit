@@ -38,8 +38,12 @@ public class UserServiceImpl implements UserService {
     }
 
     private User fillFieldsForUpdate(UserInsertDto element, User updated) {
-        if (element.getEmail() == null) { element.setEmail(updated.getEmail()); }
-        if (element.getName() == null) { element.setName(updated.getName()); }
+        if (element.getEmail() == null) {
+            element.setEmail(updated.getEmail());
+        }
+        if (element.getName() == null) {
+            element.setName(updated.getName());
+        }
         return UserMapper.toUser(element);
     }
 

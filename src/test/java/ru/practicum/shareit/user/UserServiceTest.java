@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -98,6 +99,6 @@ public class UserServiceTest {
     void getById() {
         when(repository.findById(any()))
                 .thenReturn(Optional.of(returnedUsers.get(0)));
-
+        assertEquals(Optional.of(returnedUsers.get(0)), service.findById(1L));
     }
 }

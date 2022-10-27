@@ -18,9 +18,7 @@ import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.utils.validation.ValidationMarker;
 
 import javax.validation.Valid;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,11 +94,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Comment postComment(CommentInsertDto comment) {
+    public Comment postComment(@Valid CommentInsertDto comment) {
         if (findById(comment.getItemId())
                 .orElseThrow(() -> getNoSuchElementException("item", comment.getItemId()))
                 .getBookings().stream()
-                .noneMatch(a -> a.getEnd().isBefore(LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault())))
+                .noneMatch(a -> a.getEnd().isBefore(LocalDateTime.now()))
         ) {
             throw new IllegalArgumentException("must have non-zero number of booking in past");
         }

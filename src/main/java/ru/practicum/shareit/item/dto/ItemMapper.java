@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingSecondLevelDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.Status;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -38,15 +39,19 @@ public class ItemMapper {
     }
 
     public ItemGetDto toItemGetDto(Item item, Long userId) {
-        BookingSecondLevelDto lastBooking = null;
-        BookingSecondLevelDto nextBooking = null;
+        BookingSecondLevelDto lastBooking;
+        BookingSecondLevelDto nextBooking;
         if (item.getOwner().getId().equals(userId)) {
+            LocalDateTime now = LocalDateTime.now();
             lastBooking = BookingMapper.toSecondLevel(
                     bookingRepository.findFirstByItemIdIsAndEndBeforeOrderByEndDesc(item.getId(),
-                            LocalDateTime.now()).orElse(null));
+                            now).orElse(null));
             nextBooking = BookingMapper.toSecondLevel(
                     bookingRepository.findFirstByItemIdIsAndStartAfterOrderByStartAsc(item.getId(),
-                            LocalDateTime.now()).orElse(null));
+                            now).orElse(null));
+        } else {
+            lastBooking = null;
+            nextBooking = null;
         }
         return new ItemGetDto(
                 item.getId(),
@@ -67,9 +72,13 @@ public class ItemMapper {
                 item.getName(),
                 userService.findById(item.getOwner()).orElse(null),
                 item.getDescription(),
-                item.getRequestId() == null ? null :
-                        itemRequestService.findById(item.getRequestId()).orElse(null),
+                getRequest(item.getRequestId()),
                 item.getAvailable() == null ? null :
                         item.getAvailable() ? Status.AVAILABLE : Status.RENTED);
+    }
+
+    private ItemRequest getRequest(Long requestId) {
+        return requestId == null ? null :
+                itemRequestService.findById(requestId).orElse(null);
     }
 }

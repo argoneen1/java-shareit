@@ -34,7 +34,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequest> findAllByRequesterId(Long requesterId, Pageable page) {
         if (userService.findById(requesterId).isEmpty()) {
-            throw getNoSuchElementException("user", requesterId);
+            return List.of();
         }
         return repository.findAllByRequesterId(requesterId, page).getContent();
     }
@@ -42,7 +42,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequest> findAllExceptRequester(Long requesterId, Pageable page) {
         if (userService.findById(requesterId).isEmpty()) {
-            throw getNoSuchElementException("user", requesterId);
+            return List.of();
         }
         return repository.findAllByRequesterIdIsNot(requesterId, page).getContent();
     }

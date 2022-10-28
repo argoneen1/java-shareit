@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Pageable;
@@ -8,6 +9,7 @@ import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -34,16 +36,16 @@ public class ItemRequestServiceTest {
     void findAllByRequesterIdFailTest() {
         when(userService.findById(any()))
                 .thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class,
-                () -> service.findAllByRequesterId(1L, Pageable.unpaged()));
+        Assertions.assertEquals(List.of(),
+                service.findAllByRequesterId(1L, Pageable.unpaged()));
     }
 
     @Test
     void findAllByExceptRequesterIdFailTest() {
         when(userService.findById(any()))
                 .thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class,
-                () -> service.findAllExceptRequester(1L, Pageable.unpaged()));
+        Assertions.assertEquals(List.of(),
+                service.findAllExceptRequester(1L, Pageable.unpaged()));
     }
 
     @Test

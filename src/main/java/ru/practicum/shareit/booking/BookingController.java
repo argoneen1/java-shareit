@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
@@ -73,7 +74,10 @@ public class BookingController {
                                             @Positive
                                             int size) {
 
-        return service.findByBooker(sharerId, state, PageRequest.of(from / size, size))
+        return service.findByBooker(sharerId, state, PageRequest.of(from / size,
+                        size,
+                        Sort.Direction.DESC,
+                        "end"))
                 .stream()
                 .map(BookingMapper::toGetDto)
                 .collect(Collectors.toList());
@@ -98,7 +102,10 @@ public class BookingController {
                                                    required = false)
                                            @Positive
                                            int size) {
-        return service.findByOwner(sharerId, state, PageRequest.of(from / size, size))
+        return service.findByOwner(sharerId, state, PageRequest.of(from / size,
+                        size,
+                        Sort.Direction.DESC,
+                        "end"))
                 .stream()
                 .map(BookingMapper::toGetDto)
                 .collect(Collectors.toList());

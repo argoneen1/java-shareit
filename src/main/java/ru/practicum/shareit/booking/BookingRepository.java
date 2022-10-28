@@ -12,8 +12,7 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    @Query("select b " +
-            "from Booking b " +
+    @Query("from Booking b " +
             "where b.booker.id = :sharerId and " +
             "(:state = :all or " +
             "(:state = :past and b.end < CURRENT_TIMESTAMP ) or " +
@@ -21,8 +20,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "(:state = :current and b.start < CURRENT_TIMESTAMP and b.end > CURRENT_TIMESTAMP) or " +
             "(:state = :waiting and b.status = ru.practicum.shareit.booking.model.Status.WAITING) or " +
             "(:state = :rejected and b.status = ru.practicum.shareit.booking.model.Status.REJECTED)" +
-            ") " +
-            "order by b.end desc ")
+            ")")
     Page<Booking> findByBookerIdAndState(Long sharerId, BookingRequestsState state,
                                          BookingRequestsState all,
                                          BookingRequestsState past,
@@ -32,8 +30,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                          BookingRequestsState rejected,
                                          Pageable pageable);
 
-    @Query("select b " +
-            "from Booking b " +
+    @Query("from Booking b " +
             "where b.item.owner.id = :sharerId and " +
             "(:state = :all or " +
             "(:state = :past and b.end < CURRENT_TIMESTAMP ) or " +
@@ -41,8 +38,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "(:state = :current and b.start < CURRENT_TIMESTAMP and b.end > CURRENT_TIMESTAMP) or " +
             "(:state = :waiting and b.status = ru.practicum.shareit.booking.model.Status.WAITING) or " +
             "(:state = :rejected and b.status = ru.practicum.shareit.booking.model.Status.REJECTED)" +
-            ") " +
-            "order by b.end desc ")
+            ")")
     Page<Booking> findByItemOwnerIdAndState(Long sharerId, BookingRequestsState state,
                                             BookingRequestsState all,
                                             BookingRequestsState past,

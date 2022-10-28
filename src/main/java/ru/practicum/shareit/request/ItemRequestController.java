@@ -9,6 +9,7 @@ import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.request.dto.ItemRequestGetDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.request.service.ItemRequestService;
+import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.utils.EndpointPaths;
 
 import javax.validation.constraints.Positive;
@@ -30,6 +31,7 @@ import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 public class ItemRequestController {
 
     private final ItemRequestService service;
+    private final UserService userService;
     private final ItemRequestMapper itemRequestMapper;
 
     @PostMapping
@@ -48,15 +50,14 @@ public class ItemRequestController {
                          @RequestParam(value = "size", defaultValue = DEFAULT_PAGE_SIZE, required = false)
                          @Positive
                          int size) {
-        List<ItemRequestGetDto> requestGetDtos = service
+        if (userService.findById(requesterId).isEmpty()) {
+            throw getNoSuchElementException("request", requesterId);
+        }
+        return service
                 .findAllByRequesterId(requesterId, PageRequest.of(from, size))
                 .stream()
                 .map(itemRequestMapper::toGetDto)
                 .collect(Collectors.toList());
-        if (requestGetDtos.isEmpty()) {
-            throw getNoSuchElementException("request", requesterId);
-        }
-        return requestGetDtos;
     }
 
     @GetMapping("/all")
@@ -68,15 +69,14 @@ public class ItemRequestController {
             @RequestParam(value = "size", defaultValue = DEFAULT_PAGE_SIZE, required = false)
             @Positive
             int size) {
-        List<ItemRequestGetDto> requestGetDtos = service.findAllExceptRequester(requesterId,
+        if (userService.findById(requesterId).isEmpty()) {
+            throw getNoSuchElementException("request", requesterId);
+        }
+        return service.findAllExceptRequester(requesterId,
                         PageRequest.of(from, size, Sort.Direction.DESC, "created"))
                 .stream()
                 .map(itemRequestMapper::toGetDto)
                 .collect(Collectors.toList());
-        if (requestGetDtos.isEmpty()) {
-            throw getNoSuchElementException("request", requesterId);
-        }
-        return requestGetDtos;
     }
 
     @GetMapping("/{requestId}")

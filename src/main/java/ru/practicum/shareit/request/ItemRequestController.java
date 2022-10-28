@@ -51,7 +51,7 @@ public class ItemRequestController {
                          @Positive
                          int size) {
         if (userService.findById(requesterId).isEmpty()) {
-            throw getNoSuchElementException("request", requesterId);
+            throw getNoSuchElementException("user", requesterId);
         }
         return service
                 .findAllByRequesterId(requesterId, PageRequest.of(from, size))
@@ -70,7 +70,7 @@ public class ItemRequestController {
             @Positive
             int size) {
         if (userService.findById(requesterId).isEmpty()) {
-            throw getNoSuchElementException("request", requesterId);
+            throw getNoSuchElementException("user", requesterId);
         }
         return service.findAllExceptRequester(requesterId,
                         PageRequest.of(from, size, Sort.Direction.DESC, "created"))

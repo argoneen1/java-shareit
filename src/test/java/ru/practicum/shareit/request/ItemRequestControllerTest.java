@@ -122,6 +122,8 @@ public class ItemRequestControllerTest {
     @Test
     @Order(5)
     void getAllRequester() throws Exception {
+        when(userService.findById(any()))
+                .thenReturn(Optional.ofNullable(UserControllerTest.returnedUsers.get(0)));
         when(service.findAllByRequesterId(1L, PageRequest.of(0, Integer.parseInt(Constants.DEFAULT_PAGE_SIZE))))
                 .thenReturn(List.of(itemRequests.get(0)));
         mvc.perform(getStandardRequest(get(TEST_ENDPOINT), null, 1))
@@ -132,6 +134,8 @@ public class ItemRequestControllerTest {
     @Test
     @Order(6)
     void getAllExceptRequester() throws Exception {
+        when(userService.findById(any()))
+                .thenReturn(Optional.ofNullable(UserControllerTest.returnedUsers.get(0)));
         when(service.findAllExceptRequester(1L,
                 PageRequest.of(0,
                         Integer.parseInt(Constants.DEFAULT_PAGE_SIZE),

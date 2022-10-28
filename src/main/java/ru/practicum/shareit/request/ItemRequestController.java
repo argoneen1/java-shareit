@@ -48,10 +48,15 @@ public class ItemRequestController {
                          @RequestParam(value = "size", defaultValue = DEFAULT_PAGE_SIZE, required = false)
                          @Positive
                          int size) {
-        return service.findAllByRequesterId(requesterId, PageRequest.of(from, size))
+        List<ItemRequestGetDto> requestGetDtos = service
+                .findAllByRequesterId(requesterId, PageRequest.of(from, size))
                 .stream()
                 .map(itemRequestMapper::toGetDto)
                 .collect(Collectors.toList());
+        if (requestGetDtos.isEmpty()) {
+            throw getNoSuchElementException("request", requesterId);
+        }
+        return requestGetDtos;
     }
 
     @GetMapping("/all")
@@ -63,11 +68,15 @@ public class ItemRequestController {
             @RequestParam(value = "size", defaultValue = DEFAULT_PAGE_SIZE, required = false)
             @Positive
             int size) {
-        return service.findAllExceptRequester(requesterId,
+        List<ItemRequestGetDto> requestGetDtos = service.findAllExceptRequester(requesterId,
                         PageRequest.of(from, size, Sort.Direction.DESC, "created"))
                 .stream()
                 .map(itemRequestMapper::toGetDto)
                 .collect(Collectors.toList());
+        if (requestGetDtos.isEmpty()) {
+            throw getNoSuchElementException("request", requesterId);
+        }
+        return requestGetDtos;
     }
 
     @GetMapping("/{requestId}")

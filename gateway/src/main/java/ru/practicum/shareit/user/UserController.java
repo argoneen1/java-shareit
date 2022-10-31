@@ -29,6 +29,8 @@ public class UserController {
     @PostMapping
     @Validated(ValidationMarker.OnCreate.class)
     public ResponseEntity<Object> create(@Valid @RequestBody UserDto element) {
+        System.out.println("user + " + element.toString());
+        log.info("Create user with user={}", element);
         return client.create(element);
     }
 

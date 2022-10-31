@@ -31,6 +31,8 @@ public class ItemController {
     @Validated(ValidationMarker.OnCreate.class)
     public ResponseEntity<Object> create(@RequestHeader(USER_ID_HTTP_HEADER) Long sharerId,
                                          @Valid @RequestBody ItemDto element) {
+        System.out.println("item + " + element.toString());
+        log.info("Create item with userId={}, item={}",  sharerId, element);
         return client.create(sharerId, element);
     }
 
@@ -39,18 +41,21 @@ public class ItemController {
     public ResponseEntity<Object> update(@RequestHeader(USER_ID_HTTP_HEADER) Long sharerId,
                                          @Valid @RequestBody ItemDto element,
                                          @PathVariable Long id) {
+        log.info("Update item with userId={}, itemId={}, item={}",  sharerId, id, element);
         return client.update(sharerId, id, element);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@RequestHeader(USER_ID_HTTP_HEADER) Long sharerId,
                        @PathVariable Long id) {
+        log.info("Delete item with userId={}, itemId={}",  sharerId, id);
         client.delete(sharerId, id);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> get(@RequestHeader(USER_ID_HTTP_HEADER) Long userId,
                           @PathVariable Long id) {
+        log.info("Get item with userId={}, itemId={}",  userId, id);
         return client.get(userId, id);
     }
 
@@ -68,6 +73,7 @@ public class ItemController {
 
                                    @Positive
                                    int size) {
+        log.info("Get items with userId={}, from={}, size={}", sharerId, from, size);
         return client.getAll(sharerId, from, size);
     }
 
@@ -85,6 +91,7 @@ public class ItemController {
                                            required = false)
                                    @Positive
                                    int size) {
+        log.info("Search items with userId={}, text={}, from={}, size={}", sharerId, text, from, size);
         return client.search(sharerId, text, from, size);
     }
 
@@ -92,6 +99,7 @@ public class ItemController {
     public ResponseEntity<Object> postComment(@RequestHeader(USER_ID_HTTP_HEADER) Long authorId,
                                      @PathVariable Long itemId,
                                      @Valid @RequestBody CommentDto comment) {
+        log.info("post comment with userId={}, itemId={}, comment={}", authorId, itemId, comment);
         return client.postComment(authorId, itemId, comment);
     }
 }

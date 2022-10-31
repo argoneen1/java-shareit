@@ -26,7 +26,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestMapper itemRequestMapper;
 
     @Override
-    public ItemRequest create( ItemRequestCreateDto element) {
+    public ItemRequest create(ItemRequestCreateDto element) {
         return repository.save(itemRequestMapper.toItemRequest(element));
     }
 

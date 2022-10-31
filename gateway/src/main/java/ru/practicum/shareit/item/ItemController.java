@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.validation.ValidationMarker;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.websocket.server.PathParam;
@@ -29,15 +30,15 @@ public class ItemController {
     @PostMapping
     @Validated(ValidationMarker.OnCreate.class)
     public ResponseEntity<Object> create(@RequestHeader(USER_ID_HTTP_HEADER) Long sharerId,
-                                         @RequestBody ItemDto element) {
+                                         @Valid @RequestBody ItemDto element) {
         return client.create(sharerId, element);
     }
 
     @PatchMapping("/{id}")
     @Validated(ValidationMarker.OnUpdate.class)
     public ResponseEntity<Object> update(@RequestHeader(USER_ID_HTTP_HEADER) Long sharerId,
-                             @RequestBody ItemDto element,
-                             @PathVariable Long id) {
+                                         @Valid @RequestBody ItemDto element,
+                                         @PathVariable Long id) {
         return client.update(sharerId, id, element);
     }
 
@@ -90,7 +91,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> postComment(@RequestHeader(USER_ID_HTTP_HEADER) Long authorId,
                                      @PathVariable Long itemId,
-                                     @RequestBody CommentDto comment) {
+                                     @Valid @RequestBody CommentDto comment) {
         return client.postComment(authorId, itemId, comment);
     }
 }

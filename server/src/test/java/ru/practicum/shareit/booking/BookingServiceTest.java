@@ -244,6 +244,22 @@ public class BookingServiceTest {
     }
 
     @Test
+    void findByIdWithRequesterCheckNotFound() {
+        when(repository.findById(any()))
+                .thenReturn(Optional.empty());
+        Assertions.assertTrue(service.findByIdWithRequesterCheck(1L, 1L).isEmpty());
+    }
+
+    @Test
+    void findByIdWithRequesterSuccess() {
+        when(repository.findById(any()))
+                .thenReturn(Optional.ofNullable(bookings.get(1)));
+        when(itemService.findById(any()))
+                .thenReturn(Optional.of(returnedItemsFromService.get(1)));
+        Assertions.assertEquals(Optional.ofNullable(bookings.get(1)), service.findByIdWithRequesterCheck(1L, 1L));
+    }
+
+    @Test
     void findByBookerFailNoSuchUser() {
         when(userService.findById(any()))
                 .thenReturn(Optional.empty());

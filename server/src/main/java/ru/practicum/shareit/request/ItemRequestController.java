@@ -12,8 +12,6 @@ import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.utils.EndpointPaths;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,10 +43,8 @@ public class ItemRequestController {
     public List<ItemRequestGetDto>
     findAllByRequesterId(@RequestHeader(USER_HTTP_HEADER) Long requesterId,
                          @RequestParam(value = "from", defaultValue = "0", required = false)
-                         @PositiveOrZero
                          int from,
                          @RequestParam(value = "size", defaultValue = DEFAULT_PAGE_SIZE, required = false)
-                         @Positive
                          int size) {
         if (userService.findById(requesterId).isEmpty()) {
             throw getNoSuchElementException("user", requesterId);
@@ -64,10 +60,8 @@ public class ItemRequestController {
     public List<ItemRequestGetDto>
     findAll(@RequestHeader(USER_HTTP_HEADER) Long requesterId,
             @RequestParam(value = "from", defaultValue = "0", required = false)
-            @PositiveOrZero
             int from,
             @RequestParam(value = "size", defaultValue = DEFAULT_PAGE_SIZE, required = false)
-            @Positive
             int size) {
         if (userService.findById(requesterId).isEmpty()) {
             throw getNoSuchElementException("user", requesterId);

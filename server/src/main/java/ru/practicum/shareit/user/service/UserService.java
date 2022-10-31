@@ -4,15 +4,14 @@ import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.user.dto.UserInsertDto;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
-    User create(@Valid UserInsertDto element);
+    User create(UserInsertDto element);
 
-    User update(@Valid UserInsertDto element);
+    User update(UserInsertDto element);
 
     void delete(Long id);
 

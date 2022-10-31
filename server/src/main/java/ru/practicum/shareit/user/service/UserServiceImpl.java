@@ -3,12 +3,10 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserInsertDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.utils.validation.ValidationMarker;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,13 +20,11 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @Override
-    @Validated(ValidationMarker.OnCreate.class)
     public User create(UserInsertDto element) {
         return repository.save(UserMapper.toUser(element));
     }
 
     @Override
-    @Validated(ValidationMarker.OnUpdate.class)
     public User update(UserInsertDto element) {
         User updated = repository.findById(element.getId())
                 .orElseThrow(() -> getNoSuchElementException("user", element.getId()));

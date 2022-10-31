@@ -9,8 +9,6 @@ import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.utils.EndpointPaths;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,14 +64,12 @@ public class ItemController {
                                    @RequestParam(value = "from",
                                            defaultValue = "0",
                                            required = false)
-                                   @PositiveOrZero
                                    int from,
 
                                    @RequestParam(value = "size",
                                            defaultValue = DEFAULT_PAGE_SIZE,
                                            required = false)
 
-                                   @Positive
                                    int size) {
         return service.findAllByOwnerId(sharerId, PageRequest.of(from / size, size)).stream()
                 .map(a -> itemMapper.toItemGetDto(a, sharerId))
@@ -85,13 +81,11 @@ public class ItemController {
                                    @RequestParam(value = "from",
                                            defaultValue = "0",
                                            required = false)
-                                   @PositiveOrZero
                                    int from,
 
                                    @RequestParam(value = "size",
                                            defaultValue = DEFAULT_PAGE_SIZE,
                                            required = false)
-                                   @Positive
                                    int size) {
         return text.isBlank() ?
                 List.of() :

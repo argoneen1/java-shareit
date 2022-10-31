@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Service
 public class ItemClient extends BaseClient {
-    private static final String API_PREFIX = "/users";
+    private static final String API_PREFIX = "/items";
 
     @Autowired
     public ItemClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
@@ -38,6 +38,7 @@ public class ItemClient extends BaseClient {
     public ResponseEntity<Object> delete(long userId, long itemId) {
         return delete("/" + itemId, userId);
     }
+
     public ResponseEntity<Object> get(long userId, long itemId) {
         return get("/" + itemId, userId);
     }
@@ -48,7 +49,7 @@ public class ItemClient extends BaseClient {
                 "from", from,
                 "size", size
         );
-        return get("/all?from={from}&size={size}", userId, parameters);
+        return get("/?from={from}&size={size}", userId, parameters);
     }
 
     public ResponseEntity<Object> search(long userId, String text, Integer from, Integer size) {

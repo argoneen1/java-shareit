@@ -7,15 +7,13 @@ import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
 @Data
 @AllArgsConstructor
 public class UserDto {
 
-    @Null(groups = ValidationMarker.OnCreate.class)
-    @NotNull(groups = ValidationMarker.OnUpdate.class)
+    @Null(groups = {ValidationMarker.OnCreate.class, ValidationMarker.OnUpdate.class})
     private Long id;
 
     @NotBlank(groups = ValidationMarker.OnCreate.class)

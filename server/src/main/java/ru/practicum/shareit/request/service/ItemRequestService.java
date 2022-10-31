@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ItemRequestService {
 
-    ItemRequest create( ItemRequestCreateDto element);
+    ItemRequest create(ItemRequestCreateDto element);
 
     List<ItemRequest> findAllByRequesterId(Long requesterId, Pageable page);
 

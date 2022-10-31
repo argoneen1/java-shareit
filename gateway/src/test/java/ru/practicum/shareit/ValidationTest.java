@@ -2,9 +2,9 @@ package ru.practicum.shareit;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.validation.EndAfterStartValidator;
-import ru.practicum.shareit.utils.validation.NullOrNotBlankValidator;
+import ru.practicum.shareit.validation.NullOrNotBlankValidator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,22 +19,20 @@ public class ValidationTest {
             LocalDateTime.now().plusHours(2)
     );
 
-    List<BookingCreateDto> bookingCreateDtos = List.of(
-            new BookingCreateDto(1L,
-                    1L,
+    List<BookItemRequestDto> bookingCreateDtos = List.of(
+            new BookItemRequestDto(1L,
                     timestamps.get(0),
-                    timestamps.get(1),
-                    null),
-            new BookingCreateDto(2L,
-                    2L,
+                    timestamps.get(1)
+            ),
+            new BookItemRequestDto(2L,
                     timestamps.get(3),
-                    timestamps.get(1),
-                    null),
-            new BookingCreateDto(3L,
+                    timestamps.get(1)
+            ),
+            new BookItemRequestDto(
                     3L,
                     timestamps.get(3),
-                    timestamps.get(4),
-                    null)
+                    timestamps.get(4)
+            )
     );
 
     @Test

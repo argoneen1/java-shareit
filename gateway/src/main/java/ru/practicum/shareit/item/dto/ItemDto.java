@@ -13,8 +13,7 @@ import javax.validation.constraints.Null;
 @AllArgsConstructor
 public class ItemDto {
 
-    @Null(groups = ValidationMarker.OnCreate.class)
-    @NotNull(groups = ValidationMarker.OnUpdate.class)
+    @Null(groups = {ValidationMarker.OnCreate.class})
     private Long id;
 
     @NotBlank(groups = ValidationMarker.OnCreate.class)
@@ -27,9 +26,6 @@ public class ItemDto {
 
     @NotNull(groups = ValidationMarker.OnCreate.class)
     private Boolean available;
-
-    @NotNull(groups = {ValidationMarker.OnCreate.class, ValidationMarker.OnUpdate.class})
-    private Long owner;
 
     private Long requestId;
 }

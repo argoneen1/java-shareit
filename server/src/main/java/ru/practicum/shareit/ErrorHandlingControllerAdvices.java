@@ -12,7 +12,6 @@ import ru.practicum.shareit.exceptions.Violation;
 import ru.practicum.shareit.item.exceptions.OwnerIdNotMatches;
 import ru.practicum.shareit.user.exceptions.UserAlreadyExistsException;
 
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -50,23 +49,6 @@ public class ErrorHandlingControllerAdvices {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> ownerIdNotMatchesHandler(final OwnerIdNotMatches e) {
         return Map.of("not found", e.getMessage());
-    }
-
-    @ResponseBody
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ValidationErrorResponse onConstraintValidationException(
-            ConstraintViolationException e
-    ) {
-        final List<Violation> violations = e.getConstraintViolations().stream()
-                .map(
-                        violation -> new Violation(
-                                violation.getPropertyPath().toString(),
-                                violation.getMessage()
-                        )
-                )
-                .collect(Collectors.toList());
-        return new ValidationErrorResponse(violations);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

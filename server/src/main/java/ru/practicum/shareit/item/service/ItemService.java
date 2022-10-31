@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemService {
-    Item create( ItemInsertDto element);
+    Item create(ItemInsertDto element);
 
-    Item update( ItemInsertDto element);
+    Item update(ItemInsertDto element);
 
     void delete(Long id);
 
@@ -22,6 +22,6 @@ public interface ItemService {
 
     List<Item> search(String text, Pageable page);
 
-    Comment postComment( CommentInsertDto comment);
+    Comment postComment(CommentInsertDto comment);
 
 }

@@ -33,7 +33,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentMapper commentMapper;
 
     @Override
-    public Item create( ItemInsertDto element) {
+    public Item create(ItemInsertDto element) {
         if (userService.findById(element.getOwner()).isEmpty()) {
             throw getNoSuchElementException("item", element.getOwner());
         }
@@ -41,7 +41,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item update( ItemInsertDto element) {
+    public Item update(ItemInsertDto element) {
         Long updatingItemOwnerId = element.getOwner();
         if (userService.findById(updatingItemOwnerId).isEmpty()) {
             throw getNoSuchElementException("user", updatingItemOwnerId);
@@ -90,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Comment postComment( CommentInsertDto comment) {
+    public Comment postComment(CommentInsertDto comment) {
         if (findById(comment.getItemId())
                 .orElseThrow(() -> getNoSuchElementException("item", comment.getItemId()))
                 .getBookings().stream()

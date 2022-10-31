@@ -7,7 +7,6 @@ import lombok.Setter;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -24,7 +23,6 @@ public class Comment {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @NotBlank
     @Column(name = "text", nullable = false)
     private String text;
 

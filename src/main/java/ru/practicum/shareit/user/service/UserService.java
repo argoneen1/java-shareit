@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.service;
 
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.user.dto.UserInsertDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -17,5 +18,5 @@ public interface UserService {
 
     Optional<User> findById(Long id);
 
-    List<User> findAll();
+    List<User> findAll(Pageable page);
 }

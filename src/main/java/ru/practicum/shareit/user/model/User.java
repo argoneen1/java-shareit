@@ -1,8 +1,15 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -10,7 +17,6 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @Entity
 @Table(name = "users", schema = "public")
@@ -21,17 +27,26 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    /*public User(Long id) {
-        this.id = id;
-    }
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
+    private List<Item> items;
 
-     */
+    @OneToMany(mappedBy = "booker", cascade = CascadeType.PERSIST)
+    private List<Booking> bookings;
+
+    @OneToMany(mappedBy = "requester", cascade = CascadeType.PERSIST)
+    private List<ItemRequest> requests;
+
+    public User(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
 
     @Override
     public boolean equals(Object o) {

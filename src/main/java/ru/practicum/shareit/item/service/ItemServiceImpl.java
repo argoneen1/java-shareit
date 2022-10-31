@@ -1,10 +1,9 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.item.CommentRepository;
-import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentInsertDto;
 import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemInsertDto;
@@ -13,13 +12,13 @@ import ru.practicum.shareit.item.exceptions.OwnerIdNotMatches;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.Status;
+import ru.practicum.shareit.item.repositories.CommentRepository;
+import ru.practicum.shareit.item.repositories.ItemRepository;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.utils.validation.ValidationMarker;
 
 import javax.validation.Valid;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +34,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final CommentMapper commentMapper;
 
+    @Override
     @Validated(ValidationMarker.OnCreate.class)
     public Item create(@Valid ItemInsertDto element) {
         if (userService.findById(element.getOwner()).isEmpty()) {
@@ -43,20 +43,21 @@ public class ItemServiceImpl implements ItemService {
         return repository.save(itemMapper.toItem(element));
     }
 
+    @Override
     @Validated(ValidationMarker.OnUpdate.class)
     public Item update(@Valid ItemInsertDto element) {
-        Long elementId = element.getId();
         Long updatingItemOwnerId = element.getOwner();
         if (userService.findById(updatingItemOwnerId).isEmpty()) {
-            throw getNoSuchElementException("item", updatingItemOwnerId);
+            throw getNoSuchElementException("user", updatingItemOwnerId);
         }
-        Item updatingItem = repository.findById(elementId)
+        Item updatingItem = repository.findById(element.getId())
                 .orElseThrow(() -> getNoSuchElementException("item", element.getId()));
         Long itemOwnerId = updatingItem.getOwner().getId();
         if (!updatingItemOwnerId.equals(itemOwnerId)) {
             throw new OwnerIdNotMatches(updatingItemOwnerId, itemOwnerId);
         }
         return repository.save(fillFieldsOnUpdate(element, updatingItem));
+
     }
 
     private Item fillFieldsOnUpdate(ItemInsertDto element, Item updatingItem) {
@@ -72,27 +73,32 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.toItem(element);
     }
 
+    @Override
     public void delete(Long id) {
         repository.deleteById(id);
     }
 
+    @Override
     public Optional<Item> findById(Long id) {
         return repository.findById(id);
     }
 
-    public List<Item> findAllByOwnerId(Long ownerId) {
-        return repository.findByOwnerIdOrderByIdAsc(ownerId);
+    @Override
+    public List<Item> findAllByOwnerId(Long ownerId, Pageable page) {
+        return repository.findAllByOwnerIdOrderByIdAsc(ownerId, page).getContent();
     }
 
-    public List<Item> search(String text) {
-        return repository.search(text);
+    @Override
+    public List<Item> search(String text, Pageable page) {
+        return repository.search(text, page).getContent();
     }
 
-    public Comment postComment(CommentInsertDto comment) {
+    @Override
+    public Comment postComment(@Valid CommentInsertDto comment) {
         if (findById(comment.getItemId())
                 .orElseThrow(() -> getNoSuchElementException("item", comment.getItemId()))
                 .getBookings().stream()
-                .noneMatch(a -> a.getEnd().isBefore(LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault())))
+                .noneMatch(a -> a.getEnd().isBefore(LocalDateTime.now()))
         ) {
             throw new IllegalArgumentException("must have non-zero number of booking in past");
         }

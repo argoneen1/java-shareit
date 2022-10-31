@@ -9,12 +9,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ItemGetDto {
-
-    BookingSecondLevelDto lastBooking;
-    BookingSecondLevelDto nextBooking;
     private Long id;
     private String name;
     private String description;
     private Boolean available;
+    private Long requestId;
+    private BookingSecondLevelDto lastBooking;
+    private BookingSecondLevelDto nextBooking;
     private List<CommentGetDto> comments;
 }

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingRequestsState;
@@ -13,9 +14,11 @@ public interface BookingService {
 
     Booking confirm(Long sharerId, Long bookingId, Boolean isApproved);
 
-    Optional<Booking> findById(Long requesterId, Long bookingId);
+    Optional<Booking> findByIdWithRequesterCheck(Long requesterId, Long bookingId);
 
-    List<Booking> findByBooker(Long sharerId, BookingRequestsState state);
+    Optional<Booking> findById(Long id);
 
-    List<Booking> findByOwner(Long sharerId, BookingRequestsState state);
+    List<Booking> findByBooker(Long sharerId, BookingRequestsState state, Pageable page);
+
+    List<Booking> findByOwner(Long sharerId, BookingRequestsState state, Pageable page);
 }

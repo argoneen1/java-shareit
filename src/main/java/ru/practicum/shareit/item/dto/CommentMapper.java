@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.service.UserService;
@@ -10,7 +10,7 @@ import java.time.Instant;
 
 import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 
-@Service
+@Component
 public class CommentMapper {
 
     private final UserService userService;

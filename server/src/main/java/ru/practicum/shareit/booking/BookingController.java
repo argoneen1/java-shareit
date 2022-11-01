@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingGetDto;
@@ -20,7 +19,6 @@ import static ru.practicum.shareit.utils.Constants.USER_HTTP_HEADER;
 import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 
 @RestController
-@Validated
 @RequestMapping(path = EndpointPaths.BOOKING_ENDPOINT)
 @Slf4j
 public class BookingController {

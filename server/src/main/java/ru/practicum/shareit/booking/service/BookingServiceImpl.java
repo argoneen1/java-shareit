@@ -4,7 +4,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 
 @Service
-@Validated
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 

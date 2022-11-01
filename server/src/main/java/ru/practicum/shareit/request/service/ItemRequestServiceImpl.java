@@ -3,7 +3,6 @@ package ru.practicum.shareit.request.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
@@ -17,7 +16,6 @@ import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
-@Validated
 public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRequestRepository repository;

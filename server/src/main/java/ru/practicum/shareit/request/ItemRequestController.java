@@ -3,7 +3,6 @@ package ru.practicum.shareit.request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.request.dto.ItemRequestGetDto;
@@ -23,7 +22,6 @@ import static ru.practicum.shareit.utils.Exceptions.getNoSuchElementException;
  * TODO Sprint add-item-requests.
  */
 @RequiredArgsConstructor
-@Validated
 @RestController
 @RequestMapping(path = EndpointPaths.ITEM_REQUEST_ENDPOINT)
 public class ItemRequestController {
